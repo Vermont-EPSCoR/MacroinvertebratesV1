@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="15A284" minimumToolsVersion="Xcode 4.3">
+    <entity name="InvertebrateData" representedClassName="InvertebrateData" syncable="YES">
+        <attribute name="commonName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="family" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="flyName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="genus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imageFile" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imageRevDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="order" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="livesIn" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="StreamData" inverseName="contains" inverseEntity="StreamData" syncable="YES"/>
+    </entity>
+    <entity name="StreamData" representedClassName="StreamData" syncable="YES">
+        <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="latitude" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stateOrProvince" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="contains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="InvertebrateData" inverseName="livesIn" inverseEntity="InvertebrateData" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="InvertebrateData" positionX="0" positionY="0" width="128" height="195"/>
+        <element name="StreamData" positionX="0" positionY="0" width="128" height="135"/>
+    </elements>
+</model>
