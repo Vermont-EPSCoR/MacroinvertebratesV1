@@ -9,7 +9,6 @@
 #import "SyncV3tvc.h"
 #import "SVProgressHUD.h"
 
-
 #define weburl @"http://wikieducator.org/api.php?action=query&list=categorymembers&cmtitle=Category:Stream&cmlimit=500&format=json&cmprop=ids%7Ctitle"
 #define debug 1
 
@@ -55,7 +54,45 @@
     }
 
 - (void)findWhatKindOfInternet{
+    NSArray *subviews = [[[[UIApplication sharedApplication] valueForKey:@"statusBar"] valueForKey:@"foregroundView"]subviews];
+    NSNumber *dataNetworkItemView = nil;
     
+    for (id subview in subviews) {
+        if([subview isKindOfClass:[NSClassFromString(@"UIStatusBarDataNetworkItemView") class]]) {
+            dataNetworkItemView = subview;
+            break;
+        }
+    }
+    
+    switch ([[dataNetworkItemView valueForKey:@"dataNetworkType"]integerValue]) {
+        case 0:
+            NSLog(@"No wifi or cellular");
+            break;
+            
+        case 1:
+            NSLog(@"2G");
+            break;
+            
+        case 2:
+            NSLog(@"3G");
+            break;
+            
+        case 3:
+            NSLog(@"4G");
+            break;
+            
+        case 4:
+            NSLog(@"LTE");
+            break;
+            
+        case 5:
+            NSLog(@"Wifi");
+            break;
+            
+            
+        default:
+            break;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
