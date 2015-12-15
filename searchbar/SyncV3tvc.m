@@ -42,7 +42,7 @@
         NSLog(@"In List %@", stream.title);
     }
     
-
+    [self findWhatKindOfInternet];
     [self fetchRestData];
     UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Vermont EPSCOR"
                                                      message:@"Tap on the streams you are intersted in.  For each stream you sync, it will take ~ 30 seconds."
@@ -53,6 +53,10 @@
     [self updateLabelBarButton];
     
     }
+
+- (void)findWhatKindOfInternet{
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -165,6 +169,7 @@
     // [delegate.window addSubview:spinner];
     
     [delegate.webData clearBugs];
+    
     [delegate.webData clearStreams];
     
     
