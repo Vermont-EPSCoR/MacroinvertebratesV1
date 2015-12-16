@@ -190,11 +190,10 @@
                                     <segue destination="bmi-2B-2Lf" kind="push" id="cKB-Eg-w1x"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="psQ-qP-W5f">
-                                <rect key="frame" x="250" y="20" width="50" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <state key="normal" title="Sync">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="psQ-qP-W5f">
+                                <rect key="frame" x="255" y="23" width="59" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="sync">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -230,7 +229,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="5ad-bL-Rka">
-                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5ad-bL-Rka" id="497-HG-krT">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
@@ -452,10 +451,11 @@ Sync may take up to 5 minutes.</string>
     </scenes>
     <resources>
         <image name="about" width="1000" height="300"/>
-        <image name="bg-logo" width="420" height="580"/>
-        <image name="bg-plain" width="320" height="480"/>
+        <image name="bg-logo" width="640" height="1146"/>
+        <image name="bg-plain" width="640" height="1146"/>
         <image name="go_button" width="1000" height="300"/>
         <image name="start" width="1000" height="300"/>
+        <image name="sync" width="100" height="38"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
