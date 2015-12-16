@@ -341,7 +341,7 @@
 				ORGANIZATIONNAME = mmai;
 				TargetAttributes = {
 					8984FCAF1832D88300824BB1 = {
-						DevelopmentTeam = QH78X3WH4V;
+						DevelopmentTeam = 632732M3R6;
 					};
 					8984FCD01832D88300824BB1 = {
 						TestTargetID = 8984FCAF1832D88300824BB1;
