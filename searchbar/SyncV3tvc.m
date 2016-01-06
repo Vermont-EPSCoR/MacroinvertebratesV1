@@ -9,7 +9,6 @@
 #import "SyncV3tvc.h"
 #import "SVProgressHUD.h"
 
-
 #define weburl @"http://wikieducator.org/api.php?action=query&list=categorymembers&cmtitle=Category:Stream&cmlimit=500&format=json&cmprop=ids%7Ctitle"
 #define debug 1
 
@@ -42,10 +41,13 @@
         NSLog(@"In List %@", stream.title);
     }
     
-
+    NSString *estimated_sec = [self findWhatKindOfInternet];
+    NSLog(estimated_sec);
+    NSString *str = [NSString stringWithFormat: @"Tap on the streams you are interested in. For each stream you sync, it will take ~ %@ seconds", estimated_sec];
+    //NSString *showing =  @"Tap on the streams you are interested in. For each stream you sync, it will take ~ " estimated_sec  @" seconds.";
     [self fetchRestData];
     UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Vermont EPSCOR"
-                                                     message:@"Tap on the streams you are intersted in.  For each stream you sync, it will take ~ 30 seconds."
+                                                     message:str
                                                     delegate:self
                                            cancelButtonTitle:@"OK"
                                            otherButtonTitles: nil];
@@ -53,6 +55,56 @@
     [self updateLabelBarButton];
     
     }
+
+- (NSString *)findWhatKindOfInternet{
+    NSArray *subviews = [[[[UIApplication sharedApplication] valueForKey:@"statusBar"] valueForKey:@"foregroundView"]subviews];
+    NSNumber *dataNetworkItemView = nil;
+    
+    for (id subview in subviews) {
+        if([subview isKindOfClass:[NSClassFromString(@"UIStatusBarDataNetworkItemView") class]]) {
+            dataNetworkItemView = subview;
+            break;
+        }
+    }
+    
+    switch ([[dataNetworkItemView valueForKey:@"dataNetworkType"]integerValue]) {
+        case 0:
+            NSLog(@"No wifi or cellular");
+            return @"No Internet";
+            break;
+            
+        case 1:
+            NSLog(@"2G");
+            return @"40";
+            break;
+            
+        case 2:
+            NSLog(@"3G");
+            return @"30";
+            break;
+            
+        case 3:
+            NSLog(@"4G");
+            return @"20";
+            break;
+            
+        case 4:
+            NSLog(@"LTE");
+            return @"20";
+            break;
+            
+        case 5:
+            NSLog(@"Wifi");
+            return @"20";
+            break;
+            
+            
+        default:
+            return @"none";
+            break;
+            
+    }
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -165,6 +217,7 @@
     // [delegate.window addSubview:spinner];
     
     [delegate.webData clearBugs];
+    
     [delegate.webData clearStreams];
     
     

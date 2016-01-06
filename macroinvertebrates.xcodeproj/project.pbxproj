@@ -53,7 +53,6 @@
 		998230941C0A14E700C5AD3A /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 9982308F1C0A14E700C5AD3A /* SVProgressHUD.m */; };
 		998230951C0A14E700C5AD3A /* SVRadialGradientLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 998230911C0A14E700C5AD3A /* SVRadialGradientLayer.m */; };
 		998230B51C0A16C700C5AD3A /* HTTPRequestHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 998230B41C0A16C700C5AD3A /* HTTPRequestHandler.m */; };
-		FAD2CBC91BF5EC4400438970 /* SyncTableVC_New.m in Sources */ = {isa = PBXBuildFile; fileRef = FAD2CBC81BF5EC4400438970 /* SyncTableVC_New.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -135,8 +134,6 @@
 		998230911C0A14E700C5AD3A /* SVRadialGradientLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVRadialGradientLayer.m; sourceTree = "<group>"; };
 		998230B31C0A16C700C5AD3A /* HTTPRequestHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRequestHandler.h; sourceTree = "<group>"; };
 		998230B41C0A16C700C5AD3A /* HTTPRequestHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRequestHandler.m; sourceTree = "<group>"; };
-		FAD2CBC71BF5EC4400438970 /* SyncTableVC_New.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncTableVC_New.h; sourceTree = "<group>"; };
-		FAD2CBC81BF5EC4400438970 /* SyncTableVC_New.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncTableVC_New.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -253,8 +250,6 @@
 		8984FCBA1832D88300824BB1 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				FAD2CBC71BF5EC4400438970 /* SyncTableVC_New.h */,
-				FAD2CBC81BF5EC4400438970 /* SyncTableVC_New.m */,
 				21ADA0B218552D7A00B2806A /* SynchViewController.h */,
 				21ADA0B318552D7A00B2806A /* SynchViewController.m */,
 				998230B31C0A16C700C5AD3A /* HTTPRequestHandler.h */,
@@ -346,7 +341,7 @@
 				ORGANIZATIONNAME = mmai;
 				TargetAttributes = {
 					8984FCAF1832D88300824BB1 = {
-						DevelopmentTeam = QH78X3WH4V;
+						DevelopmentTeam = 632732M3R6;
 					};
 					8984FCD01832D88300824BB1 = {
 						TestTargetID = 8984FCAF1832D88300824BB1;
@@ -423,7 +418,6 @@
 				998230951C0A14E700C5AD3A /* SVRadialGradientLayer.m in Sources */,
 				8986AD391846AC6800153D03 /* MacroListCell.m in Sources */,
 				8985BB871846A32400660C5A /* MacroTableViewController.m in Sources */,
-				FAD2CBC91BF5EC4400438970 /* SyncTableVC_New.m in Sources */,
 				8984FCC01832D88300824BB1 /* main.m in Sources */,
 				89494FA6184AFE8D0024C535 /* HomeViewController.m in Sources */,
 				193EEA6819A264E200F2519E /* AboutViewController.m in Sources */,
@@ -558,7 +552,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.epscor.macroinvertebratesv2;
 				PRODUCT_NAME = macroinvertebrates;
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -577,7 +571,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.epscor.macroinvertebratesv2;
 				PRODUCT_NAME = macroinvertebrates;
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
