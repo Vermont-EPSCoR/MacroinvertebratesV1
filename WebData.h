@@ -35,17 +35,35 @@
 
 - (NSURL *)applicationDocumentsDirectory;
 
+- (Invertebrate *) getBugWebOld:(NSString *) bug;
+
 - (Invertebrate *) getBugWeb:(NSString *) bug;
+
+- (NSArray<Invertebrate *> *) getBugsWeb:(NSArray<NSString *> *) bug;
+
+- (Invertebrate *) parseBug:(NSString *) insectSection;
 
 - (Stream *) getStreamWeb:(NSString *) stream;
 
 - (NSArray *) getAllStreamsWeb;
+
+- (NSDictionary *) getStreamsWeb: (NSArray<NSString *> *) streams;
+
+- (Stream *) parseStreamInfo:(NSString *) streamString;
+
+- (NSArray<NSString *> *) parseStreamBugs:(NSString *) streamString;
+
+- (BOOL) linkBugsToStreams:(NSArray<Invertebrate *> *) bugs :(NSDictionary *) streams;
 
 - (NSArray *) getAllBugsWeb;
 
 - (void) synchBugs;
 
 - (BOOL) synchStreams;
+
+- (BOOL) saveStream:(Stream *) stream;
+
+- (BOOL) saveBug:(Invertebrate *) bug;
 
 - (NSArray *) getAllBugs;
 
@@ -57,23 +75,31 @@
 
 - (Stream *) getStream: (NSString *) stream;
 
+- (StreamData *) getStreamData: (NSString *) stream;
+
 - (void) clearBugs;
 
--(void) clearStreams;
+- (void) clearStreams;
 
--(NSArray *) getPopulationWeb: (NSString *) stream;
+- (NSArray *) getPopulationWeb: (NSString *) stream;
 
--(NSArray *) getPopulation:(NSString *) stream;
+- (NSArray *) getPopulation:(NSString *) stream;
 
--(BOOL) myIsNil: (NSString *) str;
+- (BOOL) myIsNil: (NSString *) str;
 
--(NSString *) myStripper: (NSString *) str;
+- (NSString *) myStripper: (NSString *) str;
 
--(UIImage *) getImageWeb:(NSString *) file;
+- (void) storeBugImageWeb:(NSString *) bugName;
 
--(void) saveImage:(UIImage *)image withFileName:(NSString *)imageName ofType:(NSString *)extension;
+- (void) storeImagesFromURLs:(NSDictionary *) bugsAndURLs;
 
--(UIImage *) loadImage:(NSString *)fileName ofType:(NSString *)extension;
+- (UIImage *) getImageWeb:(NSString *) file;
+
+- (NSDictionary*) getBugImageURLsWeb:(NSSet<NSString *> *) bugNames;
+
+- (void) saveImage:(UIImage *)image withFileName:(NSString *)imageName ofType:(NSString *)extension;
+
+- (UIImage *) loadImage:(NSString *)fileName ofType:(NSString *)extension;
 
 - (NSArray *) getAllStreamsByLocation: (NSString *) location;
 
@@ -81,7 +107,7 @@
 
 - (NSArray *) getSelectiveBugsWeb: (NSArray *) particularStream;
 
-- (BOOL) getSelectedStreamsOnly:(NSArray *) selectedStreams;
+- (BOOL) getSelectedStreamsOnly:(NSString *) selectedStreams;
 
 - (NSArray *) getAllStates;
 

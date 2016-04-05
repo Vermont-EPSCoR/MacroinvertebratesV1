@@ -7,8 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "macroinvAppDelegate.h"
 
 @interface HomeViewController : UIViewController
+
+@property macroinvAppDelegate * delegate;
 
 -(IBAction)exit;
 

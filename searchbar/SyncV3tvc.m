@@ -32,18 +32,19 @@
     
     //[SVProgressHUD show];
     NSArray *allStreams = [delegate.webData getAllStreams];
-    NSLog(@"HERE%@", [delegate.webData getAllStreams]);
+    //NSLog(@"HERE%@", [delegate.webData getAllStreams]);
     for (StreamData *stream in allStreams){
         [self.selectionsArray addObject:[stream.title stringByTrimmingCharactersInSet:
                                          [NSCharacterSet whitespaceCharacterSet]]];
         [self.defaultsSelectionsArray addObject:[stream.title stringByTrimmingCharactersInSet:
                                          [NSCharacterSet whitespaceCharacterSet]]];
-        NSLog(@"In List %@", stream.title);
+        //NSLog(@"In List %@", stream.title);
     }
     
     NSString *estimated_sec = [self findWhatKindOfInternet];
-    NSLog(estimated_sec);
-    NSString *str = [NSString stringWithFormat: @"Tap on the streams you are interested in. For each stream you sync, it will take ~ %@ seconds", estimated_sec];
+    NSLog(@"%@",estimated_sec);
+    NSString *str = [NSString stringWithFormat: @"Tap on the streams you would like to download to your device. Syncing all of the streams will take ~ %@ seconds", estimated_sec];
+    //NSString *str = [NSString stringWithFormat: @"Tap on the streams you are interested in. For each stream you sync, it will take ~ %@ seconds", estimated_sec];
     //NSString *showing =  @"Tap on the streams you are interested in. For each stream you sync, it will take ~ " estimated_sec  @" seconds.";
     [self fetchRestData];
     UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Vermont EPSCOR"
@@ -178,9 +179,9 @@
     
     NSString* item = self.streamsArray[indexPath.row];
     cell.textLabel.text = item;
-    NSLog(@"CELL has %@, I have %@", [self selectionsArray], item);
+    //NSLog(@"CELL has %@, I have %@", [self selectionsArray], item);
     if ([self.selectionsArray containsObject:item]){
-        NSLog(@"have to tick this %@", item);
+        //NSLog(@"have to tick this %@", item);
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
     else{
@@ -195,20 +196,14 @@
 }
 
 - (IBAction)pullSelectedStreams:(UIBarButtonItem *)sender {
-    NSLog(@"Show Indicator");
+    //NSLog(@"Show Indicator");
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeBlack];
     [SVProgressHUD showWithStatus:@"Downloading Streams ..."];
-
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         // Your code to run on the main queue/thread
-        if ([self getThemAll]){
-            [SVProgressHUD dismiss];
-            
-        }
+        [self getThemAll];
+        [SVProgressHUD dismiss];
     }];
-    
-    
-    
 }
 
 - (BOOL) getThemAll {
@@ -220,12 +215,36 @@
     
     [delegate.webData clearStreams];
     
-    
     // if none of the items are selected, pull all of them otherwise perform selective sync
     if ([self updateLabelBarButton]){
         BOOL success = false;
         
-        for (NSString *streamUnderConsideration in self.selectionsArray){
+        NSDictionary *streamsAndPopulations = [delegate.webData getStreamsWeb:self.selectionsArray];
+        NSMutableSet<NSString *> *allbugNames = [[NSMutableSet<NSString *> alloc] init];
+        for(NSArray* bugs in [streamsAndPopulations allValues])
+            [allbugNames addObjectsFromArray:bugs];
+        //[SVProgressHUD showProgress:.33 status:@"Downloading Bugs ..."];
+        NSArray<Invertebrate *> *allBugs = [delegate.webData getBugsWeb:[allbugNames allObjects]];
+        //[SVProgressHUD showProgress:.66 status:@"Linking Bugs to Streams ..."];
+        success = [delegate.webData linkBugsToStreams:allBugs :streamsAndPopulations];
+        NSDictionary *allBugsWithImageURLs = [delegate.webData getBugImageURLsWeb:allbugNames];
+        NSLog(@"Done syncing... getting pictures");
+        //[delegate.webData storeImagesFromURLs:allBugsWithImageURLs];
+        NSThread* imageDLThread = [[NSThread alloc] initWithTarget:delegate.webData
+                                                     selector:@selector(storeImagesFromURLs:)
+                                                       object:allBugsWithImageURLs];
+        double thisPriority = [[NSThread currentThread] threadPriority];
+        [imageDLThread setThreadPriority:(thisPriority*.5)];
+        [imageDLThread start];  // Actually start the thread
+        
+        /*
+        for(NSString *bug in allbugNames) {
+            NSLog(@"Getting Image for: %@",bug);
+            [delegate.webData storeBugImageWeb:bug];
+        }
+ */
+        //success = [delegate.webData getSelectedStreamsOnly:streamUnderConsideration];
+/*        for (NSString *streamUnderConsideration in self.selectionsArray){
             NSArray *allbugs = [delegate.webData getPopulationWeb:streamUnderConsideration];
             //[delegate.webData getStreamWeb:streamUnderConsideration];
             [delegate.webData selectiveSync:allbugs];
@@ -233,11 +252,11 @@
             [SVProgressHUD setStatus:@"Updating message ..." ];
             NSLog(@"Update Message pop here");
         }
-        
+*/
         if(success){
             
             UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Sync Complete"
-                                                             message:@"Congratulations, Sync Complete"
+                                                             message:@"Congratulations, Sync Complete.\nImages will continue to download in the background."
                                                             delegate:self
                                                    cancelButtonTitle:@"OK"
                                                    otherButtonTitles: nil];
@@ -302,7 +321,7 @@
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
-    NSLog(@"STREAM! %@", self.selectionsArray);
+    //NSLog(@"STREAM! %@", self.selectionsArray);
     [self.tableView numberOfRowsInSection:[_streamsArray count]];
    // [self.tableView reloadRowsAtIndexPaths:0 withRowAnimation:UITableViewRowAnimationLeft];
     [self updateLabelBarButton];
@@ -318,6 +337,10 @@
 }
 
 - (IBAction)selectAll:(UIBarButtonItem *)sender {
+    // pjc fix
+    // First, remove all streams from selectionsArray so we don't get duplicates
+    [self.selectionsArray removeAllObjects];
+    
     for (NSString *stream in self.streamsArray){
         [self.selectionsArray addObject:stream];
     }

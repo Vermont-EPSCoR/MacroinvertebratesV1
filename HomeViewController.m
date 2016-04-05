@@ -7,13 +7,15 @@
 //
 
 #import "HomeViewController.h"
+#import "SyncV3tvc.h"
 
 @interface HomeViewController ()
 
 @end
 
-
 @implementation HomeViewController
+@synthesize delegate;
+
 -(IBAction)exit{
     exit(0);
     
@@ -32,6 +34,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+//    delegate = (macroinvAppDelegate *) [[UIApplication sharedApplication] delegate];
+//    [SyncV3tvc get
 }
 
 - (void)viewWillAppear:(BOOL)animated {

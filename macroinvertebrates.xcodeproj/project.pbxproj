@@ -17,6 +17,7 @@
 		21ADA0AE185529FC00B2806A /* StreamData.m in Sources */ = {isa = PBXBuildFile; fileRef = 21ADA0AD185529FC00B2806A /* StreamData.m */; };
 		21ADA0B1185529FD00B2806A /* InvertebrateData.m in Sources */ = {isa = PBXBuildFile; fileRef = 21ADA0B0185529FD00B2806A /* InvertebrateData.m */; };
 		21ADA0B418552D7A00B2806A /* SynchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 21ADA0B318552D7A00B2806A /* SynchViewController.m */; };
+		29D251DE1C9B367200BE68B9 /* XMLDelegateBug.m in Sources */ = {isa = PBXBuildFile; fileRef = 29D251DD1C9B367200BE68B9 /* XMLDelegateBug.m */; };
 		361821051856046B0046672C /* aboutBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 361821041856046B0046672C /* aboutBackground.png */; };
 		89494FA6184AFE8D0024C535 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 89494FA5184AFE8D0024C535 /* HomeViewController.m */; };
 		89494FA8184B00DB0024C535 /* button1.png in Resources */ = {isa = PBXBuildFile; fileRef = 89494FA7184B00DB0024C535 /* button1.png */; };
@@ -83,6 +84,8 @@
 		21ADA0B0185529FD00B2806A /* InvertebrateData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InvertebrateData.m; sourceTree = "<group>"; };
 		21ADA0B218552D7A00B2806A /* SynchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SynchViewController.h; path = ../SynchViewController.h; sourceTree = "<group>"; };
 		21ADA0B318552D7A00B2806A /* SynchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SynchViewController.m; path = ../SynchViewController.m; sourceTree = "<group>"; };
+		29D251DC1C9B347300BE68B9 /* XMLDelegateBug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLDelegateBug.h; path = ../XMLDelegateBug.h; sourceTree = "<group>"; };
+		29D251DD1C9B367200BE68B9 /* XMLDelegateBug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLDelegateBug.m; sourceTree = "<group>"; };
 		361821041856046B0046672C /* aboutBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aboutBackground.png; sourceTree = "<group>"; };
 		89494FA4184AFE8D0024C535 /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HomeViewController.h; path = ../HomeViewController.h; sourceTree = "<group>"; };
 		89494FA5184AFE8D0024C535 /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HomeViewController.m; path = ../HomeViewController.m; sourceTree = "<group>"; };
@@ -216,6 +219,8 @@
 		8984FCB91832D88300824BB1 /* macroinvertebrates */ = {
 			isa = PBXGroup;
 			children = (
+				29D251DC1C9B347300BE68B9 /* XMLDelegateBug.h */,
+				29D251DD1C9B367200BE68B9 /* XMLDelegateBug.m */,
 				8984FCC21832D88300824BB1 /* macroinvAppDelegate.h */,
 				8984FCC31832D88300824BB1 /* macroinvAppDelegate.m */,
 				8984FCC51832D88300824BB1 /* Main.storyboard */,
@@ -337,11 +342,11 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = sb;
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = mmai;
 				TargetAttributes = {
 					8984FCAF1832D88300824BB1 = {
-						DevelopmentTeam = 632732M3R6;
+						DevelopmentTeam = J6656P2UF9;
 					};
 					8984FCD01832D88300824BB1 = {
 						TestTargetID = 8984FCAF1832D88300824BB1;
@@ -424,6 +429,7 @@
 				21ADA0B418552D7A00B2806A /* SynchViewController.m in Sources */,
 				21ADA0B1185529FD00B2806A /* InvertebrateData.m in Sources */,
 				8984FCC41832D88300824BB1 /* macroinvAppDelegate.m in Sources */,
+				29D251DE1C9B367200BE68B9 /* XMLDelegateBug.m in Sources */,
 				998230881C0A132E00C5AD3A /* SyncV3tvc.m in Sources */,
 				998230941C0A14E700C5AD3A /* SVProgressHUD.m in Sources */,
 				8987DD5A184704C5005D112E /* DetailsViewController.m in Sources */,
@@ -486,6 +492,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -533,6 +540,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -545,11 +553,12 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2.0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "searchbar/macroinvertebrates-Prefix.pch";
 				INFOPLIST_FILE = "searchbar/macroinvertebrates-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.epscor.macroinvertebratesv2;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebrates;
 				PRODUCT_NAME = macroinvertebrates;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -564,11 +573,12 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2.0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "searchbar/macroinvertebrates-Prefix.pch";
 				INFOPLIST_FILE = "searchbar/macroinvertebrates-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.epscor.macroinvertebratesv2;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebrates;
 				PRODUCT_NAME = macroinvertebrates;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -592,6 +602,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "searchbarTests/macroinvertebratesTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = macroinvertebratesTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -610,6 +621,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "searchbar/searchbar-Prefix.pch";
 				INFOPLIST_FILE = "searchbarTests/macroinvertebratesTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = macroinvertebratesTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
