@@ -8,6 +8,7 @@
 
 #import "WebData.h"
 #import "UIImage+Resize.h"
+#import "XMLDelegateBug.h"
 
 @implementation WebData
 
@@ -108,13 +109,13 @@ setFeedbackLabel - pjc
 
 
 /* ====================================================
-    getBugWeb
+    getBugWebOld
  
  ====================================================
  */
 
-- (Invertebrate *) getBugWeb:(NSString *) bug{
-    Invertebrate * result;
+- (Invertebrate *) getBugWebOld:(NSString *) bug{
+    Invertebrate *result;
     NSString *url = [NSString stringWithFormat:@"http://wikieducator.org/index.php?title=%@&action=raw", bug];
     NSURL *urlRequest = [NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     NSData* data = [NSData dataWithContentsOfURL:
@@ -182,15 +183,415 @@ setFeedbackLabel - pjc
                 } else {
                     NSArray *arrayWithTwoStrings = [value componentsSeparatedByString:@"<!--Stop-->"];
                     result.text = [arrayWithTwoStrings objectAtIndex:0];
-                    NSLog([arrayWithTwoStrings objectAtIndex:0]);
+                    NSLog(@"%@", result.text);
                 }
-                
                 
             }
         }
     } // end iteration through mstr
 
     return result;
+}
+
+/* ====================================================
+ getBugWeb
+ 
+ ====================================================
+ */
+
+- (Invertebrate *) getBugWeb:(NSString *) bug {
+    
+    NSString *url = [NSString stringWithFormat:@"http://wikieducator.org/api.php?titles=%@&action=query&export&exportnowrap", bug];
+    NSURL *urlRequest = [NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    NSData* data = [NSData dataWithContentsOfURL:urlRequest];
+    XMLDelegateBug *bugDelegate = [[XMLDelegateBug alloc] init];
+    
+    //Strip starting XML to <page><text>, then send {{InsectSection to fn below
+    
+    // Make sure that there is data.
+    if (data != nil) {
+        NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithData:data];
+        xmlParser.delegate = bugDelegate;
+        [xmlParser parse];
+    } else {
+        NSLog(@"No data returned from getBugWeb API call!!");
+        NSLog(@"%@",url);
+    }
+    
+    NSArray* bugStringArray = [bugDelegate getArray];
+    //NSString *bugString = [objectAtIndex:0];
+    
+    //for(NSString* bugString in bugStringArray)
+    //    NSLog(@"Bug:%@",bugString);
+
+    return [self parseBug:[bugStringArray objectAtIndex:0]];
+}
+/* ====================================================
+ getBugsWeb
+ 
+ ====================================================
+ */
+
+- (NSArray<Invertebrate *> *) getBugsWeb:(NSArray<NSString *> *) allBugs {
+    NSMutableArray<Invertebrate *> *invertebrateArray = [[NSMutableArray alloc] init];
+    
+    //Limit number of bugs to 50 per call
+    NSArray<NSArray*> *bugSets = [self splitArray:allBugs :50];
+    
+    for(NSArray<NSString *> *bugs in bugSets) {
+        //Build URL portion
+        NSString *bugsTextURL = [self appendStringsForURL:bugs :@"Template:" :@"|"];
+        NSLog(@"%@", [NSString stringWithFormat:@"Downloading Bug Data for %@", bugsTextURL]);
+        
+        
+        NSString *url = [NSString stringWithFormat:@"http://wikieducator.org/api.php?titles=%@&action=query&export&exportnowrap", bugsTextURL];
+        NSURL *urlRequest = [NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        NSData* data = [NSData dataWithContentsOfURL:urlRequest];
+        XMLDelegateBug *bugDelegate = [[XMLDelegateBug alloc] init];
+        
+        // Make sure that there is data.
+        if (data != nil) {
+            NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithData:data];
+            xmlParser.delegate = bugDelegate;
+            [xmlParser parse];
+        } else {
+            NSLog(@"No data returned from getBugWeb API call!!");
+            NSLog(@"%@",url);
+        }
+        
+        NSArray* bugStringArray = [bugDelegate getArray];
+        for(NSString* bugString in bugStringArray) {
+            Invertebrate *bug = [self parseBug:bugString];
+            [self saveBug:bug];
+            [invertebrateArray addObject:bug];
+        }
+    }
+    return invertebrateArray;
+}
+
+/*
+ ====================================================
+ parseBug
+ 
+ ====================================================
+ */
+- (Invertebrate *) parseBug:(NSString *) insectSection {
+    Invertebrate *result;
+    
+    NSMutableArray * mstr = [NSMutableArray arrayWithArray: [insectSection componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"{}|"]]];
+    
+    NSPredicate *sPredicate = [NSPredicate predicateWithFormat:@"SELF contains[c] '='"];
+    [mstr filterUsingPredicate:sPredicate];
+    
+    result = [[Invertebrate alloc] init];
+    
+    NSArray * prop;
+    NSString * label;
+    NSString * value;
+    for (NSString * object in mstr) {
+        prop = [object componentsSeparatedByString:@"="];
+        if ([prop count] > 1) {
+            label = [[prop objectAtIndex:0] stringByTrimmingCharactersInSet:
+            [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            value = [[prop objectAtIndex:1] stringByTrimmingCharactersInSet:
+            [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            if ([label isEqualToString:@"name"]) {
+                result.name = value;
+            }
+            else if ([label isEqualToString:@"order"]) {
+                result.order = value;
+            }
+            else if ([label isEqualToString:@"family"]) {
+                result.family = value;
+            }
+            else if ([label isEqualToString:@"genus"]) {
+                result.genus = value;
+            }
+            else if ([label isEqualToString:@"image"]) {
+                result.imageFile = value;
+            }
+            
+            // new additions Bijay
+            else if ([label isEqualToString:@"common name"]) {
+                result.commonName = value;
+            }
+            else if ([label isEqualToString:@"tied fly"]) {
+                result.flyName = value;
+            }
+            
+            else if ([label isEqualToString:@"text"]) {
+                value = [value stringByReplacingOccurrencesOfString:@"[" withString:@""];
+                value = [value stringByReplacingOccurrencesOfString:@"]" withString:@""];
+                result.text = value;
+                
+                // Bijay: added this to accomodate stop signs
+                if ([value rangeOfString:@"<!--Stop-->"].location == NSNotFound) {
+                    result.text = value;
+                } else {
+                    NSArray *arrayWithTwoStrings = [value componentsSeparatedByString:@"<!--Stop-->"];
+                    result.text = [arrayWithTwoStrings objectAtIndex:0];
+                    //NSLog(@"%@", result.text);
+                }
+            }
+        }
+    }
+    return result;
+}
+
+/*
+ ====================================================
+ getStreamsWeb
+ 
+ ====================================================
+ */
+-(NSDictionary *) getStreamsWeb: (NSArray<NSString *> *) allStreams {
+    // Downloads data for stream from web using API and creates a NSDictionary of strings with all of the templates associated with streams as the value and the steam title as the key.  Format is Acroneuria, Anotcha, etc., WITHOUT the preceeding "Template:"
+
+    NSMutableDictionary *streamPopulation = [[NSMutableDictionary alloc] init];
+
+    //Limit number of streams to 50 per call
+    NSArray<NSArray*> *streamSet = [self splitArray:allStreams :50];
+    
+    for(NSArray<NSString*> *streams in streamSet) {
+        //Build URL portion
+        NSString *streamsTextURL = [self appendStringsForURL:streams :@"" :@"|"];
+        NSLog(@"%@", [NSString stringWithFormat:@"Downloading Stream Data for %@", streamsTextURL]);
+        
+        NSString *url = [NSString stringWithFormat:@"http://wikieducator.org/api.php?titles=%@&action=query&export&exportnowrap", streamsTextURL];
+        NSURL *urlRequest = [NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        NSData* data = [NSData dataWithContentsOfURL:urlRequest];
+        NSLog(@"Download Finished, Parsing");
+        
+        XMLDelegateBug *streamDelegate = [[XMLDelegateBug alloc] init];
+        
+        // Make sure that there is data.
+        if (data != nil) {
+            NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithData:data];
+            xmlParser.delegate = streamDelegate;
+            [xmlParser parse];
+        } else {
+            NSLog(@"No data returned from getStreamsWeb API call!!");
+            NSLog(@"%@",url);
+        }
+        
+        NSArray *streamStringArray = [streamDelegate getArray];
+        
+        for(NSString *streamString in streamStringArray) {
+            Stream *curStream = [self parseStreamInfo:streamString];
+            [self saveStream:curStream];
+            [streamPopulation setObject:[self parseStreamBugs:streamString] forKey:curStream.title];
+        }
+    }
+
+    return streamPopulation;
+}
+
+/* ====================================================
+ parseStreamInfo
+ 
+ ====================================================
+ */
+
+- (Stream *) parseStreamInfo:(NSString *) streamString{
+    NSMutableArray * mstr = [NSMutableArray arrayWithArray: [streamString componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"{}|"]]];
+    
+    NSPredicate *sPredicate = [NSPredicate predicateWithFormat:@"SELF contains[c] '='"];
+    [mstr filterUsingPredicate:sPredicate];
+    
+    Stream *result = [[Stream alloc] init];
+    
+    NSArray * prop;
+    NSString * label;
+    NSString * value;
+    for (NSString *object in mstr) {
+        prop = [object componentsSeparatedByString:@"="];
+        if ([prop count] > 1) {
+            label = [[prop objectAtIndex:0] stringByTrimmingCharactersInSet:
+            [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            value = [[prop objectAtIndex:1] stringByTrimmingCharactersInSet:
+                     [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            if (label == nil) {
+                NSLog(@"parseStreamInfo found null label!!!");
+            }
+            else if ([label isEqualToString:@"Stream"]) {
+                result.title = value;
+            }
+            else if ([label isEqualToString:@"Latitude"]) {
+                result.latitude = value;
+            }
+            else if ([label isEqualToString:@"Longitude"]) {
+                result.longitude = value;
+            }
+            else if ([label isEqualToString:@"State or Province"]) {
+                result.stateOrProvince = value;
+            }
+            else if ([label isEqualToString:@"Country"]) {
+                result.country = value;
+            }
+        }
+    }
+    return result;
+}
+
+/* ====================================================
+ parseStreamBugs
+ 
+ ====================================================
+ */
+
+- (NSArray<NSString *>*) parseStreamBugs:(NSString *) streamString{
+    NSMutableArray * mstr = [NSMutableArray arrayWithArray: [streamString componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"{}"]]];
+    
+    //Loop through all {{}} until Infobox stream
+    int i = 0;
+    while([[mstr objectAtIndex:i] rangeOfString:@"Infobox stream"].location == NSNotFound) {
+        i++;
+    }
+    
+    //Skip Comment
+    i = i+4;
+    
+    NSMutableArray<NSString *> *bugsInStream = [[NSMutableArray<NSString *> alloc] init];
+    
+    while(i < [mstr count] && [[mstr objectAtIndex:i] rangeOfString:@"Category:"].location == NSNotFound) {
+        NSString *bugName = [[mstr objectAtIndex:i] stringByTrimmingCharactersInSet:
+        [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        //Remove Blank Lines and some streams are edited to use "=" to designate Genus
+        if(!([bugName isEqualToString:@""]) && [bugName rangeOfString:@"="].location == NSNotFound)
+            [bugsInStream addObject:bugName];
+        i++;
+    }
+    return bugsInStream;
+}
+
+/* ====================================================
+ linkBugstoStreams
+ 
+ ====================================================
+ */
+- (BOOL) linkBugsToStreams:(NSArray<Invertebrate *> *) bugs :(NSDictionary *) streams{
+    BOOL success = true;
+
+    // Check and conditionally add initial object to database
+    NSManagedObjectContext *context = [self managedObjectContext];
+    
+    if(context == nil){
+        NSLog(@"Failed to get context in linkBugsToStream");
+        success = false;
+    } else {
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"StreamData" inManagedObjectContext:context];
+        [fetchRequest setEntity:entity];
+        NSError *error;
+        
+        for(NSString *streamName in [streams allKeys]){
+            StreamData *stream = [self getStreamData:streamName];
+            NSLog(@"Linking Bugs in Stream: %@",stream.title);
+            if(stream == nil) {
+                NSLog(@"Stream Not Found: %@", streamName);
+            } else {
+                for(NSString *bugName in [streams objectForKey:streamName]){
+                    //NSLog(@"Linking Bug %@ to Stream %@", bugName, streamName);
+                    InvertebrateData * inv = [self getBugData:bugName];
+                    if(inv == nil) {
+                        NSLog(@"Bug Not Found: %@ in Stream: %@", bugName, streamName);
+                    } else {
+                        [stream addContainsObject:inv];
+                    }
+                }
+            }
+            if (![context save:&error]) {
+                NSLog(@"Error Saving Linkage Data for Stream: %@", streamName);
+                NSLog(@"%@", [error localizedDescription]);
+                success = false;
+            }
+
+        }
+    }
+    return success;
+}
+
+/*
+ ====================================================
+ saveStream
+ 
+ ====================================================
+ */
+- (BOOL) saveStream:(Stream *) stream {
+
+    BOOL success = true;
+    // Check and conditionally add initial object to database
+    NSManagedObjectContext *context = [self managedObjectContext];
+
+    if(context == nil) {
+        NSLog(@"Get Context failed in saveStream");
+        success = false;
+    } else {
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"StreamData" inManagedObjectContext:context];
+        [fetchRequest setEntity:entity];
+        NSError *error;
+     
+        StreamData * streamData;
+
+        streamData = [NSEntityDescription insertNewObjectForEntityForName:@"StreamData" inManagedObjectContext:context];
+        
+        streamData.title = stream.title;
+        streamData.country = stream.country;
+        streamData.stateOrProvince = stream.stateOrProvince;
+        streamData.latitude = stream.latitude;
+        streamData.longitude = stream.longitude;
+        
+        if (![context save:&error]) {
+            NSLog(@"Error Saving Data for Stream: %@", stream.title);
+            NSLog(@"%@", [error localizedDescription]);
+            success = false;
+        }
+    }
+    return success;
+}
+
+/*
+ ====================================================
+ saveBug
+ 
+ ====================================================
+ */
+- (BOOL) saveBug:(Invertebrate *) bug {
+    BOOL success = true;
+    
+    // Check and conditionally add initial object to database
+    NSManagedObjectContext *context = [self managedObjectContext];
+    
+    if(context == nil) {
+        NSLog(@"Get Context failed in saveBug");
+        success = false;
+    } else {
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"InvertebrateData"        inManagedObjectContext:context];
+        [fetchRequest setEntity:entity];
+        NSError *error;
+        
+        InvertebrateData *bugData;
+        
+        bugData = [NSEntityDescription insertNewObjectForEntityForName:@"InvertebrateData" inManagedObjectContext:context];
+        
+        bugData.name = bug.name;
+        bugData.genus = bug.genus;
+        bugData.family = bug.family;
+        bugData.order = bug.order;
+        bugData.text = bug.text;
+        bugData.imageFile = bug.imageFile;
+        bugData.commonName = bug.commonName;
+        bugData.flyName = bug.flyName;
+        
+        if (![context save:&error]) {
+            NSLog(@"Error Saving Data for Bug: %@", bug.name);
+            NSLog(@"%@", [error localizedDescription]);
+            success = false;
+        }
+    }
+    return success;
 }
 
 
@@ -200,7 +601,7 @@ setFeedbackLabel - pjc
  ====================================================
  */
 
-- (NSArray *) getAllBugsWeb{
+- (NSArray *) getAllBugsWeb {
     NSArray * results;
     NSMutableArray * intermediateResults = [[NSMutableArray alloc] init];
     
@@ -257,6 +658,7 @@ setFeedbackLabel - pjc
     NSArray * results;
     NSMutableArray * intermediateResults = [[NSMutableArray alloc] init];
     
+    NSLog(@"Downloading Stream Names");
     NSString *url = @"http://wikieducator.org/api.php?action=query&list=categorymembers&cmtitle=Category:Stream&cmlimit=500&format=json&cmprop=ids%7Ctitle";
     NSURL *urlRequest = [NSURL URLWithString:url];
     NSError *err = nil;
@@ -529,10 +931,9 @@ getAllStreamsByLocation
 - (NSArray *) getAllStreamsByLocation: (NSString *) location{
     NSManagedObjectContext *context = self.managedObjectContext;
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription
-                                   entityForName:@"StreamData" inManagedObjectContext:context];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"StreamData" inManagedObjectContext:context];
     //NSString *str = [NSString stringWithFormat:@"(country == '%@') OR (stateOrProvince == '%@')", location, location];
-    NSString *str = [NSString stringWithFormat:@"stateOrProvince == ' %@'", location];
+    NSString *str = [NSString stringWithFormat:@"stateOrProvince == '%@'", location];
    // NSLog(str);
     
     [fetchRequest setPredicate:[NSPredicate predicateWithFormat:str]];
@@ -590,10 +991,8 @@ getAllStreamsByLocation
     else{
         return nil;
     }
-    
-    
-    
 }
+    
 /*
  ====================================================
  getBugData
@@ -619,13 +1018,11 @@ getAllStreamsByLocation
         InvertebrateData * matchingRecord = [bugData objectAtIndex:0]; // always return first match
         return matchingRecord;
     }
-    else{
+    else {
         return nil;
     }
-    
-    
-    
 }
+
 /*
  ====================================================
  getStream
@@ -660,6 +1057,37 @@ getAllStreamsByLocation
     return matchingStream;
     
 }
+
+/*
+ ====================================================
+ getStreamData
+ 
+ ====================================================
+ */
+- (StreamData *) getStreamData:(NSString *) stream{
+    
+    NSManagedObjectContext *context = self.managedObjectContext;
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription
+                                   entityForName:@"StreamData" inManagedObjectContext:context];
+    NSString *str = [NSString stringWithFormat:@"title == '%@'", stream];
+    
+    [fetchRequest setEntity:entity];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:str]];
+    NSError *error;
+    
+    NSArray *streamData = [context executeFetchRequest:fetchRequest error:&error];
+    
+    
+    if ([streamData count] > 0){
+        StreamData * matchingRecord = [streamData objectAtIndex:0]; // always return first match
+        return matchingRecord;
+    }
+    else {
+        return nil;
+    }
+}
+
 /*
  ====================================================
  clearBugs
@@ -706,6 +1134,7 @@ getAllStreamsByLocation
 - (NSURL *)applicationDocumentsDirectory{
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
+
 /*
 ====================================================
 getPopulationWeb
@@ -716,6 +1145,7 @@ getPopulationWeb
     // Working - pjc
     // Downloads data for stream from web using API and creates NSMutatable array of strings with all of the templates associated with stream.  Format is Acroneuria, Anotcha, etc., WITHOUT the preceeding "Template:"
     
+    NSLog(@"%@", [NSString stringWithFormat:@"Requesting Stream Data for %@", [self myStripper:stream]]);
     NSString *url = [NSString stringWithFormat:@"http://wikieducator.org/api.php?action=query&prop=templates&titles=%@&tllimit=40&format=json", [self myStripper:stream]];
     NSURL *urlRequest = [NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     NSData* data = [NSData dataWithContentsOfURL:
@@ -723,7 +1153,7 @@ getPopulationWeb
     
     NSString *streamString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     //////NSLog(streamString);
-    
+    NSLog(@"Download Finished, Parsing");
     NSMutableArray * mstr = [NSMutableArray arrayWithArray: [streamString componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"\""]]];
     
     
@@ -738,12 +1168,14 @@ getPopulationWeb
         // Exclude default templates - pjc
         if(!([sr isEqualToString:@"Infobox stream"] || [sr isEqualToString:@"InsectSection"] ||
            [sr isEqualToString:@"OrderFamilyGenus"] || [sr isEqualToString:@"ProjectNav"] ||
-           [sr isEqualToString:@"Rivers\\/ProjectNav"] || [sr isEqualToString:@"Vbar"]))
+           [sr isEqualToString:@"Rivers/ProjectNav"] || [sr isEqualToString:@"Vbar"]))
         [mstr1 addObject:sr];
     }
+    NSLog(@"Done");
     //////NSLog([mstr1 description]);
     return mstr1;
 }
+
 /*
 ====================================================
 getPopulation
@@ -793,6 +1225,154 @@ getPopulation
    // str = [str stringByReplacingOccurrencesOfString:@"'" withString:@""];
     return str;
 }
+
+/*
+ ====================================================
+ appendStringsForURL
+ 
+ ====================================================
+ */
+- (NSString *) appendStringsForURL: (NSArray<NSString *> *) stringArray : (NSString *) prefix : (NSString *) suffix {
+    NSMutableString *URLtext = [[NSMutableString alloc] init];
+    for(NSString *string in stringArray) {
+        [URLtext appendString:[NSString stringWithFormat:@"%@%@%@",prefix, string, suffix]];
+    }
+    return [URLtext substringToIndex:[URLtext length]-1];
+}
+
+/*
+ ====================================================
+ splitArray
+ 
+ ====================================================
+ */
+- (NSArray<NSArray*> *) splitArray: (NSArray *) array : (NSUInteger) size {
+    NSMutableArray<NSArray*> *newArray = [[NSMutableArray<NSArray*> alloc] init];
+    
+    for(NSUInteger i=0;i<array.count;i=i+size) {
+        NSUInteger numObjects = size;
+        if(i+numObjects > array.count)
+            numObjects = array.count-i;
+        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(i, numObjects)];
+        [newArray addObject:[array objectsAtIndexes:indexSet]];
+    }
+    return newArray;
+}
+
+/*
+ ====================================================
+ getBugImageURLsWeb
+ 
+ ====================================================
+ */
+-(NSDictionary *) getBugImageURLsWeb:(NSSet<NSString *> *) bugNames {
+    NSMutableArray<NSString *> *allImageNames = [[NSMutableArray<NSString *> alloc] init];
+    NSMutableDictionary *allBugImageFilesAndURLs = [[NSMutableDictionary alloc] init];
+    
+    for(NSString *bugName in bugNames) {
+        Invertebrate *inv = [self getBug:bugName];
+        if(!(inv == nil)) {
+            if(inv.imageFile != nil)
+                [allImageNames addObject:inv.imageFile];
+            else
+                NSLog(@"nil imageFile for Bug: %@",inv.name);
+        }
+    }
+    
+    //Limit number of imageNames to 50 per call
+    NSArray<NSArray*> *imageNameSets = [self splitArray:allImageNames :50];
+    
+    for(NSArray<NSString*> *imageNames in imageNameSets) {
+        NSString *URLImageNames = [self appendStringsForURL:imageNames :@"" :@"|"];
+        
+        // The awesome new 400 px images
+        NSString *url = [NSString stringWithFormat:@"http://wikieducator.org/api.php?action=query&iiurlwidth=400&prop=imageinfo&iiprop=url&format=json&titles=%@", URLImageNames];
+        NSURL *urlRequest = [NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        NSData* data = [NSData dataWithContentsOfURL:urlRequest];
+        
+        NSError *err = nil;
+        NSDictionary *bugs = [NSJSONSerialization JSONObjectWithData:data
+                                                             options:kNilOptions
+                                                               error:&err];
+        
+        if(err)
+        {
+            NSLog(@"Error reading JSON data for %@",url);
+        }
+        
+        //Dig into JSON Dictionary
+        NSDictionary *topLevel = [bugs objectForKey:@"query"];
+        NSDictionary *pages = [topLevel objectForKey:@"pages"];
+        
+        for(NSDictionary *page in [pages allValues]) {
+            NSArray *imageInfo = [page objectForKey:@"imageinfo"];
+            NSDictionary *imageDict = [imageInfo objectAtIndex:0];
+            [allBugImageFilesAndURLs setObject:[imageDict objectForKey:@"thumburl"] forKey:[page objectForKey:@"title"]];
+        }
+    }
+    return allBugImageFilesAndURLs;
+}
+
+/*
+ ====================================================
+ getBugImageWeb
+ 
+ ====================================================
+ */
+-(void) storeBugImageWeb:(NSString *) bugName {
+    Invertebrate *inv = [self getBug:bugName];
+    UIImage *img = [self getImageWeb: inv.imageFile];
+    
+    //UIImage *img = [self getImageWeb:[thisBug.imageFile stringByReplacingOccurrencesOfString:@" " withString:@"_"]];
+    //NSLog([img description]);
+    if (img!= nil) {
+        NSString *s = [inv.imageFile stringByReplacingOccurrencesOfString:@"File:" withString:@""];
+        NSArray * se = [s componentsSeparatedByString:@"."];
+        if ([se count] > 1){
+            //pjc - debug image size, and duplicates - fix - make this a second thread
+            //NSLog(@"Saving %@ -- size: %0.0f, %0.0f -- %d of %d", s, [img size].height, [img size].width, i, bugs.count);
+            [self saveImage:img withFileName:[se objectAtIndex:0] ofType:[se objectAtIndex:1]];
+        }
+    }
+}
+
+/*
+ ====================================================
+ storeImagesFromURLs
+ 
+ ====================================================
+ */
+-(void) storeImagesFromURLs:(NSDictionary *) bugsAndURLs {
+    for(NSString *imageFile in [bugsAndURLs allKeys]) {
+        //Check to see if image with filename exists
+        NSString *s = [imageFile stringByReplacingOccurrencesOfString:@"File:" withString:@""];
+        NSArray *se = [s componentsSeparatedByString:@"."];
+        UIImage *imageChk = [self loadImage:[se objectAtIndex:0] ofType:[se objectAtIndex:1]];
+        if(imageChk == nil)
+        {
+            NSLog(@"Downloading Image File: %@", imageFile);
+            
+            @autoreleasepool {
+                NSString *url = [bugsAndURLs objectForKey:imageFile];
+                NSURL *urlRequest = [NSURL URLWithString:url];
+                NSData* data = [NSData dataWithContentsOfURL:urlRequest];
+                UIImage *img = [UIImage imageWithData:data];
+                
+                if (img!= nil) {
+                    if ([se count] > 1){
+                        //NSLog(@"Saving %@ -- size: %0.0f, %0.0f", s, [img size].height, [img size].width);
+                        [self saveImage:img withFileName:[se objectAtIndex:0] ofType:[se objectAtIndex:1]];
+                    }
+                } else {
+                    NSLog(@"Failed to Download Image File: %@", imageFile);
+                }
+            }
+        } else {
+            NSLog(@"Already have image:%@",imageFile);
+        }
+    }
+}
+
 /*
  ====================================================
  getImageWeb
@@ -871,6 +1451,8 @@ getPopulation
     //pjc - Replace _ & " "
     imageName = [imageName stringByReplacingOccurrencesOfString:@"_" withString:@""];
     imageName = [imageName stringByReplacingOccurrencesOfString:@" " withString:@""];
+//    imageName = [imageName stringByReplacingOccurrencesOfString:@"(" withString:@""];
+//    imageName = [imageName stringByReplacingOccurrencesOfString:@")" withString:@""];
    
     extension = [extension lowercaseString];
     extension = [extension stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -896,7 +1478,7 @@ getPopulation
             NSLog(@"Error creating directory: %@",writeError);
     }
     
-    
+    NSLog(@"Saving with Filename:%@:",imageName);
     if ([[extension lowercaseString] isEqualToString:@"png"]) {
         [UIImagePNGRepresentation(image) writeToFile:[resourcePath stringByAppendingPathComponent:[NSString stringWithFormat:@"bugImages/%@.%@", imageName, @"png"]] options:NSDataWritingAtomic error:&writeError];
     } else if ([extension isEqualToString:@"jpg"] || [extension isEqualToString:@"jpeg"]) {
@@ -920,17 +1502,19 @@ getPopulation
     //pjc - Replace _ with spaces
     fileName = [fileName stringByReplacingOccurrencesOfString:@"_" withString:@""];
     fileName = [fileName stringByReplacingOccurrencesOfString:@" " withString:@""];
+//    fileName = [fileName stringByReplacingOccurrencesOfString:@"(" withString:@""];
+//    fileName = [fileName stringByReplacingOccurrencesOfString:@")" withString:@""];
     
     extension = [extension lowercaseString];
     extension = [extension stringByReplacingOccurrencesOfString:@" " withString:@""];
-    
-    //NSLog(@"loadImage:%@.%@:",fileName,extension);
     
     //pjc - replaced bad resource path
     //NSString * resourcePath = [[NSBundle mainBundle] resourcePath];
     NSArray *arrayPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
     NSString *resourcePath = [arrayPaths objectAtIndex:0];
 
+    //NSLog(@"Loading Image:%@.%@:",fileName,extension);
+    
     UIImage * result = [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@/bugImages/%@.%@", resourcePath, fileName, extension]];
     
     return result;
@@ -953,7 +1537,7 @@ getPopulation
             return;
         
         InvertebrateData *bug;
-        int i=0;
+        //int i=0;
         
         for (Invertebrate *thisBug in bugs) {
             
@@ -974,7 +1558,8 @@ getPopulation
                 bug.commonName = thisBug.commonName;
                 bug.flyName = thisBug.flyName;
                 
-                //pjc added release pool
+                //pjc added release pool TODO: spawn as new thread - https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Multithreading/CreatingThreads/CreatingThreads.html
+                /*
                 @autoreleasepool {
                     ////NSLog(thisBug.imageFile);
                     // Download bug image
@@ -992,7 +1577,7 @@ getPopulation
                         }
                     }
                 } // end autoreleasepool
-                
+                */
                 
             }// end of outer if
             
@@ -1007,32 +1592,40 @@ getPopulation
 
 - (NSArray *) getSelectiveBugsWeb: (NSArray *) particularStream{
     NSArray * results;
-    NSMutableArray * intermediateResults = [[NSMutableArray alloc] init];
+    //NSMutableArray * intermediateResults = [[NSMutableArray alloc] init];
     
     NSLog(@"%@", particularStream);
     NSString *currentBug;
-    Invertebrate * currentInvertebrate;
+    // New line
+    NSMutableArray<NSString *> *bugsToGet = [[NSMutableArray alloc] init];
+    
+    //Invertebrate * currentInvertebrate;
     for (int i = 0; i < [particularStream count]; i++) {
         currentBug = [particularStream objectAtIndex:i];
         if (currentBug != nil){
             
             // BIJAY check if you already have that bug in your tables -> check if the text field of it is nil TODO Work pending here
-            InvertebrateData *inv = [self getBugData:currentBug];
+            //InvertebrateData *inv = [self getBugData:currentBug];
             if ([self getBugData:currentBug] == (InvertebrateData *)nil){
-            NSLog(@"BUG to deal with : %@", currentBug);
-            // if it is not there pull it
-            currentBug = [NSString stringWithFormat:@"Template:%@", currentBug];
-            currentInvertebrate = [self getBugWeb:currentBug];
-            if (currentInvertebrate != nil){
-                [intermediateResults addObject:currentInvertebrate];
-            }
-            }
-            else{
-                NSLog(@"The bug was already there = %@", currentBug);
+                NSLog(@"BUG to deal with : %@", currentBug);
+                //Added one line
+                [bugsToGet addObject:[NSString stringWithFormat:@"Template:%@", currentBug]];
+                // if it is not there pull it
+//                currentBug = [NSString stringWithFormat:@"Template:%@", currentBug];
+//                currentInvertebrate = [self getBugWeb:currentBug];
+//                if (currentInvertebrate != nil){
+//                    [intermediateResults addObject:currentInvertebrate];
             }
         }
+        else{
+            NSLog(@"The bug was already there = %@", currentBug);
+        }
     }
-    results = [NSArray arrayWithArray:intermediateResults];
+    //Add one line to get bugs
+    results = [NSArray arrayWithArray:[self getBugsWeb:bugsToGet]];
+
+
+    //results = [NSArray arrayWithArray:intermediateResults];
     
     return results;
 }
@@ -1105,9 +1698,9 @@ getPopulation
     [allStates addObject:@"Any"];
     
     for (StreamData *sData in data){
-        NSLog(@"DISPLAYING!!! %@",sData.stateOrProvince);
-        NSString *trimmed = [sData.stateOrProvince stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        [allStates addObject:trimmed];
+        //NSLog(@"DISPLAYING!!! %@",sData.stateOrProvince);
+        //NSString *trimmed = [sData.stateOrProvince stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        [allStates addObject:sData.stateOrProvince];
     }
     NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:allStates];
     NSSet *uniqueStates = [orderedSet set];

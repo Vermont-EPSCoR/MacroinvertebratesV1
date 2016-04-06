@@ -68,7 +68,7 @@
         [invertebrateImage setImage:image];
     }
     else{
-        invertebrateImage.Hidden = TRUE;
+        invertebrateImage.hidden = TRUE;
         NSLog(@"Failed to load image: %@", bug.imageFile);
     }
     //NSLog(@"Loaded %@ from %@",[image description], bug.imageFile);
