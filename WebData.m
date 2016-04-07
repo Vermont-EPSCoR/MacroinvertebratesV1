@@ -262,6 +262,7 @@ setFeedbackLabel - pjc
         NSArray* bugStringArray = [bugDelegate getArray];
         for(NSString* bugString in bugStringArray) {
             Invertebrate *bug = [self parseBug:bugString];
+            bug.imageRevDate = bugDelegate.timestamp;
             [self saveBug:bug];
             [invertebrateArray addObject:bug];
         }
@@ -584,6 +585,9 @@ setFeedbackLabel - pjc
         bugData.imageFile = bug.imageFile;
         bugData.commonName = bug.commonName;
         bugData.flyName = bug.flyName;
+        bugData.imageRevDate = bug.imageRevDate;
+        
+        NSLog(@"%@", bugData);
         
         if (![context save:&error]) {
             NSLog(@"Error Saving Data for Bug: %@", bug.name);

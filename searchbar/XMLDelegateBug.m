@@ -42,10 +42,25 @@
         [arrInsectSections addObject:[NSString stringWithString:currentValue]];
         [currentValue setString:@""];
     }
+    else if([currentElement isEqualToString:@"timestamp"]) {
+        currentValue = [NSMutableString stringWithString:[currentValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+
+        @autoreleasepool {
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"];
+            NSDate *date = [[NSDate alloc] init];
+            date = [dateFormatter dateFromString:currentValue];
+//            NSLog(@"XMLDelegateBug in the timestamp: %@", currentValue);
+//            NSLog(@"Parsed Date: %@", date);
+            self.timestamp = date;
+        }
+
+        [currentValue setString:@""];
+    }
 }
 
 -(void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
-    if([currentElement isEqualToString:@"text"])
+    if([currentElement isEqualToString:@"text"] || [currentElement isEqualToString:@"timestamp"])
         [currentValue appendString:string];
 }
 
