@@ -16,11 +16,6 @@
 @implementation HomeViewController
 @synthesize delegate;
 
--(IBAction)exit{
-    exit(0);
-    
-}
-
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];

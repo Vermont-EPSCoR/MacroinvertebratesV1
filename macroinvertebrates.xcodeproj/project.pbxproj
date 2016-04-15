@@ -346,7 +346,7 @@
 				ORGANIZATIONNAME = mmai;
 				TargetAttributes = {
 					8984FCAF1832D88300824BB1 = {
-						DevelopmentTeam = J6656P2UF9;
+						DevelopmentTeam = DR8P875AC3;
 					};
 					8984FCD01832D88300824BB1 = {
 						TestTargetID = 8984FCAF1832D88300824BB1;
@@ -557,8 +557,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "searchbar/macroinvertebrates-Prefix.pch";
 				INFOPLIST_FILE = "searchbar/macroinvertebrates-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebrates;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebratesv2;
 				PRODUCT_NAME = macroinvertebrates;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -577,8 +577,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "searchbar/macroinvertebrates-Prefix.pch";
 				INFOPLIST_FILE = "searchbar/macroinvertebrates-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebrates;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebratesv2;
 				PRODUCT_NAME = macroinvertebrates;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

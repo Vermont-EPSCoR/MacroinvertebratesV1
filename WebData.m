@@ -526,11 +526,12 @@ setFeedbackLabel - pjc
             } else {
                 for(NSString *bugName in [streams objectForKey:streamName]){
                     //NSLog(@"Linking Bug %@ to Stream %@", bugName, streamName);
-                    InvertebrateData * inv = [self getBugData:bugName];
+                    InvertebrateData *inv = [self getBugData:bugName];
                     if(inv == nil) {
                         NSLog(@"Bug Not Found: %@ in Stream: %@", bugName, streamName);
                     } else {
                         [stream addContainsObject:inv];
+                        [inv addLivesInObject:stream];
                     }
                 }
             }
@@ -809,7 +810,7 @@ setFeedbackLabel - pjc
                         NSArray * se = [s componentsSeparatedByString:@"."];
                         if ([se count] > 1){
                             //pjc - debug image size, and duplicates - fix - make this a second thread
-                            NSLog(@"Saving %@ -- size: %0.0f, %0.0f -- %d of %d", s, [img size].height, [img size].width, i, bugs.count);
+                            NSLog(@"Saving %@ -- size: %0.0f, %0.0f -- %d of %d", s, [img size].height, [img size].width, i, (int)bugs.count);
                             [self saveImage:img withFileName:[se objectAtIndex:0] ofType:[se objectAtIndex:1]];
                         }
                     }
@@ -1716,13 +1717,13 @@ getPopulation
 - (NSArray *) getAllStates{
     NSManagedObjectContext *context = self.managedObjectContext;
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription
-                                   entityForName:@"StreamData" inManagedObjectContext:context];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"StreamData" inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
     NSError *error;
     
     NSArray *data = [context executeFetchRequest:fetchRequest error:&error];
-    NSMutableArray *allStates = [[NSMutableArray alloc]init];
+    NSMutableSet *allStates = [[NSMutableSet alloc]init];
+    
     [allStates addObject:@"Any"];
     
     for (StreamData *sData in data){
@@ -1730,13 +1731,7 @@ getPopulation
         //NSString *trimmed = [sData.stateOrProvince stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         [allStates addObject:sData.stateOrProvince];
     }
-    NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:allStates];
-    NSSet *uniqueStates = [orderedSet set];
-    
-    
-    return [uniqueStates allObjects];
-
-    
+    return [allStates allObjects];
 }
 
 - (NSDate *) getImageLastUpdateDate: (NSDateFormatter *) dateFormatter :(NSString *) imageUrl {
