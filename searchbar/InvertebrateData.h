@@ -16,7 +16,7 @@
 @property (nonatomic, retain) NSString * family;
 @property (nonatomic, retain) NSString * genus;
 @property (nonatomic, retain) NSString * imageFile;
-@property (nonatomic, retain) NSString * imageRevDate;
+@property (nonatomic, retain) NSDate * imageRevDate;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * order;
 @property (nonatomic, retain) NSString * text;

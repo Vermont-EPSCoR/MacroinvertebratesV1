@@ -465,6 +465,39 @@ setFeedbackLabel - pjc
     return bugsInStream;
 }
 
+- (BOOL) bugRequiresUpdate: (InvertebrateData *)bug {
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:@"InvertebrateData" inManagedObjectContext:managedObjectContext]];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"name = %@", bug.name]];
+    [request setFetchLimit:1];
+    
+    NSError* error = nil;
+    NSArray* results = [self.managedObjectContext executeFetchRequest:request error:&error];
+    
+    NSLog(@"Results has: %tu", (unsigned long)[results count]);
+    
+    Invertebrate* stored_bug = [results objectAtIndex:0];
+    NSLog(@"RESULT[0]: %@", stored_bug);
+    
+    if(stored_bug == nil) {
+        NSLog(@"Stored bug is nil");
+        return YES;
+    } else if(error != nil) {
+        NSLog(@"Error is not nil");
+        return YES;
+    } else if([stored_bug.imageRevDate compare:bug.imageRevDate] == NSOrderedDescending) {
+        NSLog(@"Date comparison");
+        return YES;
+    } else {
+        NSLog(@"Default to NO");
+        return NO;
+    }
+    
+    NSLog(@"Outside of the ifs");
+    
+    return YES;
+}
+
 /* ====================================================
  linkBugstoStreams
  
@@ -1347,17 +1380,23 @@ getPopulation
  ====================================================
  */
 -(void) storeImagesFromURLs:(NSDictionary *) bugsAndURLs {
+    NSDate* lastUpdate = [self getLastSyncDate];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"EEE',' d MMM yyyy hh:mm:ss zzz"];  //
+    
     for(NSString *imageFile in [bugsAndURLs allKeys]) {
         //Check to see if image with filename exists
         NSString *s = [imageFile stringByReplacingOccurrencesOfString:@"File:" withString:@""];
         NSArray *se = [s componentsSeparatedByString:@"."];
         UIImage *imageChk = [self loadImage:[se objectAtIndex:0] ofType:[se objectAtIndex:1]];
-        if(imageChk == nil)
+        NSString *url = [bugsAndURLs objectForKey:imageFile];
+        BOOL imageOutOfDate = [[self getImageLastUpdateDate:dateFormatter: url] compare:lastUpdate] == NSOrderedDescending;
+        
+        if(imageChk == nil || imageOutOfDate)
         {
             NSLog(@"Downloading Image File: %@", imageFile);
             
             @autoreleasepool {
-                NSString *url = [bugsAndURLs objectForKey:imageFile];
                 NSURL *urlRequest = [NSURL URLWithString:url];
                 NSData* data = [NSData dataWithContentsOfURL:urlRequest];
                 UIImage *img = [UIImage imageWithData:data];
@@ -1372,9 +1411,11 @@ getPopulation
                 }
             }
         } else {
-            NSLog(@"Already have image:%@",imageFile);
+            NSLog(@"Already have image, and is up to date: %@",imageFile);
         }
     }
+    
+    [self setLastUpdateDate];
 }
 
 /*
@@ -1384,33 +1425,16 @@ getPopulation
  ====================================================
  */
 -(UIImage *) getImageWeb:(NSString *) file {
-    //pjc - large images gumming up works, but now fixed
-    /*
-    if([[self myStripper:file] isEqualToString:@"File:Aeshna_cyanea_Nymph.jpg"] ||
-       [[self myStripper:file] isEqualToString:@"file:Phylocentropus_larva.jpg"] ||
-       [[self myStripper:file] isEqualToString:@"File:Valvata_2_species.jpg"])
-        file = @"File:Acroneuria_cover.jpg";
-    NSLog(@"'%@'", file);
-    */
-    
-    // OLD FILE ALL WORKING!!! BIJAY IMP
-    //NSString *url = [NSString stringWithFormat:@"http://wikieducator.org/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=%@", file];
-    
     // The awesome new 400 px images
     NSString *url = [NSString stringWithFormat:@"http://wikieducator.org/api.php?action=query&iiurlwidth=400&prop=imageinfo&iiprop=url&format=json&titles=%@", file];
     NSLog(@"File %@ : and URL %@", file, url);
     NSURL *urlRequest = [NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    //NSURL *urlRequest = [NSURL URLWithString:url];
-   ////NSLog([[NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] description]);
     NSData* data = [NSData dataWithContentsOfURL:
                     urlRequest];
 
-    ////NSLog([data description]);
     NSString *bugString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    ////NSLog(bugString);
 
     NSMutableArray * mstr = [NSMutableArray arrayWithArray: [bugString componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"\""]]];
-    ////NSLog([mstr description]);
 
     NSPredicate *sPredicate = [NSPredicate predicateWithFormat:@"NOT (SELF contains[c] 'File:')"];
     [mstr filterUsingPredicate:sPredicate];
@@ -1715,5 +1739,49 @@ getPopulation
     
 }
 
+- (NSDate *) getImageLastUpdateDate: (NSDateFormatter *) dateFormatter :(NSString *) imageUrl {
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:imageUrl]];
+    [request setHTTPMethod:@"HEAD"];
+
+    NSError *error = nil;
+    NSHTTPURLResponse *response;
+    
+    [NSURLConnection sendSynchronousRequest: request returningResponse: &response error: &error];
+    if ([response respondsToSelector:@selector(allHeaderFields)]) {
+        NSDictionary *dictionary = [response allHeaderFields];
+        NSString *dateStr = [dictionary objectForKey:@"Last-Modified"];
+        NSDate* date = [dateFormatter dateFromString:dateStr];
+        
+        if(date != nil) {
+            return date;
+        }
+    }
+    
+    return [NSDate date];
+}
+
+- (void) setLastUpdateDate {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    [userDefaults setObject:[NSDate date] forKey:@"lastImageSync"];
+    
+    [userDefaults synchronize];
+}
+
+- (NSDate *) getLastSyncDate {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    NSDate *lastSync = [userDefaults objectForKey:@"lastImageSync"];
+    
+    if(lastSync == nil) {
+        // If the date is NULL (we've never synced before) set it to 1 second after the start of UNIX
+        lastSync = [NSDate dateWithTimeIntervalSinceReferenceDate:1.0];
+        NSLog(@"Setting date to %@", lastSync);
+    } else {
+        NSLog(@"Last Sync Date Was: %@", lastSync);
+    }
+    
+    return lastSync;
+}
 
 @end
