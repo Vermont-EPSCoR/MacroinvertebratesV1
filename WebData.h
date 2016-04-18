@@ -111,4 +111,10 @@
 
 - (NSArray *) getAllStates;
 
+- (void) setLastUpdateDate;
+
+- (NSDate *) getLastSyncDate;
+
+- (NSDate *) getImageLastUpdateDate:(NSDateFormatter *) dateFormatter :(NSString *) imageUrl;
+
 @end

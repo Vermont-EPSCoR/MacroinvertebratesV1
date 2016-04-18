@@ -14,6 +14,7 @@
 @property (nonatomic, strong) NSMutableArray *arrInsectSections;
 //@property (nonatomic, strong) NSMutableDictionary *dictTempDataStorage;
 @property (nonatomic, strong) NSMutableString *currentValue;
+@property (nonatomic, strong) NSDate *timestamp;
 @property (nonatomic, strong) NSString *currentElement;
 
 -(void)parserDidStartDocument:(NSXMLParser *)parser;

@@ -16,7 +16,7 @@
 @property NSString *order;
 @property NSString *text;
 @property NSString *imageFile;
-@property NSString *imageRevDate;
+@property NSDate *imageRevDate;
 
 // newer additions
 @property NSString *commonName;
