@@ -22,7 +22,7 @@
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property UILabel *feedbackLabel;
-
+@property NSDateFormatter *dateFormatter;
 
 /*
  //pjc
@@ -91,11 +91,11 @@
 
 - (void) storeBugImageWeb:(NSString *) bugName;
 
-- (void) storeImagesFromURLs:(NSDictionary *) bugsAndURLs;
+//- (void) storeImagesFromURLs:(NSDictionary *) bugsAndURLs;
 
 - (UIImage *) getImageWeb:(NSString *) file;
 
-- (NSDictionary*) getBugImageURLsWeb:(NSSet<NSString *> *) bugNames;
+//- (NSDictionary*) getBugImageURLsWeb:(NSSet<NSString *> *) bugNames;
 
 - (void) saveImage:(UIImage *)image withFileName:(NSString *)imageName ofType:(NSString *)extension;
 
@@ -115,6 +115,8 @@
 
 - (NSDate *) getLastSyncDate;
 
-- (NSDate *) getImageLastUpdateDate:(NSDateFormatter *) dateFormatter :(NSString *) imageUrl;
+- (NSMutableArray<NSDictionary*> *) getBugImageURLs:(NSSet<NSString *> *) bugNames;
+
+- (void) saveBugImages:(NSMutableArray<NSDictionary*> *) bugImages;
 
 @end

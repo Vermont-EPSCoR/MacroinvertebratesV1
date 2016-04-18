@@ -227,12 +227,13 @@
         NSArray<Invertebrate *> *allBugs = [delegate.webData getBugsWeb:[allbugNames allObjects]];
         //[SVProgressHUD showProgress:.66 status:@"Linking Bugs to Streams ..."];
         success = [delegate.webData linkBugsToStreams:allBugs :streamsAndPopulations];
-        NSDictionary *allBugsWithImageURLs = [delegate.webData getBugImageURLsWeb:allbugNames];
+//        NSDictionary *allBugsWithImageURLs = [delegate.webData getBugImageURLsWeb:allbugNames];
+        NSMutableArray<NSDictionary *> *bugImages = [delegate.webData getBugImageURLs:allbugNames];
         NSLog(@"Done syncing... getting pictures");
         //[delegate.webData storeImagesFromURLs:allBugsWithImageURLs];
         NSThread* imageDLThread = [[NSThread alloc] initWithTarget:delegate.webData
-                                                     selector:@selector(storeImagesFromURLs:)
-                                                       object:allBugsWithImageURLs];
+                                                     selector:@selector(saveBugImages:)
+                                                       object:bugImages];
         double thisPriority = [[NSThread currentThread] threadPriority];
         [imageDLThread setThreadPriority:(thisPriority*.5)];
         [imageDLThread start];  // Actually start the thread
