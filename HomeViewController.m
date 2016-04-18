@@ -29,8 +29,14 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-//    delegate = (macroinvAppDelegate *) [[UIApplication sharedApplication] delegate];
-//    [SyncV3tvc get
+    delegate = (macroinvAppDelegate *) [[UIApplication sharedApplication] delegate];
+    
+    if ([delegate isFirstRun]) {
+        NSLog(@"No bugs detected. GotoSync");
+        [self performSegueWithIdentifier:@"GotoSync" sender:self];
+    } else {
+        NSLog(@"We've got bugs.");
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {

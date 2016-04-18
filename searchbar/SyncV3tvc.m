@@ -44,18 +44,16 @@
     NSString *estimated_sec = [self findWhatKindOfInternet];
     NSLog(@"%@",estimated_sec);
     NSString *str = [NSString stringWithFormat: @"Tap on the streams you would like to download to your device. Syncing all of the streams will take ~ %@ seconds", estimated_sec];
-    //NSString *str = [NSString stringWithFormat: @"Tap on the streams you are interested in. For each stream you sync, it will take ~ %@ seconds", estimated_sec];
-    //NSString *showing =  @"Tap on the streams you are interested in. For each stream you sync, it will take ~ " estimated_sec  @" seconds.";
+    NSString *firstRunMessage = [NSString stringWithFormat: @"Thank you for downloading the VT EPSCoR Macroinvertebrate app.  You must download the macroinvertebrate data from the internet before using this program.\n\nTap on the streams you would like to download to your device. Syncing all of the streams will take ~ %@ seconds", estimated_sec];
     [self fetchRestData];
     UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Vermont EPSCOR"
-                                                     message:str
+                                                     message:([delegate isFirstRun]) ? firstRunMessage : str
                                                     delegate:self
                                            cancelButtonTitle:@"OK"
                                            otherButtonTitles: nil];
     [alert show];
     [self updateLabelBarButton];
-    
-    }
+}
 
 - (NSString *)findWhatKindOfInternet{
     NSArray *subviews = [[[[UIApplication sharedApplication] valueForKey:@"statusBar"] valueForKey:@"foregroundView"]subviews];

@@ -25,7 +25,7 @@
 
 - (NSString *)applicationDocumentsDirectory;
 
-
+- (BOOL) isFirstRun;
 
 - (void)saveContext;
 
