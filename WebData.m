@@ -1798,6 +1798,7 @@ getPopulation
     }
     
     [self setLastUpdateDate];
+    NSLog(@"Image Download Complete!");
 }
 
 @end
