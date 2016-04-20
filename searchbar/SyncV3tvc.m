@@ -287,7 +287,7 @@
         if(success){
             
             UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Sync Complete"
-                                                             message:@"Congratulations, Sync Complete"
+                                                             message:@"Sync complete."
                                                             delegate:self
                                                    cancelButtonTitle:@"OK"
                                                    otherButtonTitles: nil];
@@ -296,7 +296,7 @@
         }
         else{
             UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Sync Failed"
-                                                             message:@"We apologize. Sync failed. Please check Network Connection and try again"
+                                                             message:@"Sync failed. Please check your Internet connection and try again."
                                                             delegate:self
                                                    cancelButtonTitle:@"OK"
                                                    otherButtonTitles: nil];
