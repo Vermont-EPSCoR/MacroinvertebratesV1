@@ -120,18 +120,21 @@
     UIImage *image;
     if ([se count] > 1){
         image = [delegate.webData loadImage:[se objectAtIndex:0] ofType:[se objectAtIndex:1]];
-    }
-    else{
+    } else {
         image = nil;
     }
     //NSLog(@"Loaded %@ from %@",[image description], currentBug.imageFile);
 
+    
+    //    LOOK HERE TO TEST MacroTableView
+    //    Uncomment the line below to test
+    //    image = nil;
+    
     if(image != nil){
         //UIImage *image = [UIImage imageNamed: bug.imageFile];
         cell.macroImage.contentMode = UIViewContentModeScaleAspectFit;
         [cell.macroImage setImage:image];
-    }
-    else{
+    } else {
         UIImage *image = [UIImage imageNamed: @"bugA.jpg"];
         cell.macroImage.contentMode = UIViewContentModeScaleAspectFit;
         [cell.macroImage setImage:image];

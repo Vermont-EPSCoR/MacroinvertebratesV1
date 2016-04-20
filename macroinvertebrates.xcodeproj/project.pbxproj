@@ -54,6 +54,7 @@
 		998230941C0A14E700C5AD3A /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 9982308F1C0A14E700C5AD3A /* SVProgressHUD.m */; };
 		998230951C0A14E700C5AD3A /* SVRadialGradientLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 998230911C0A14E700C5AD3A /* SVRadialGradientLayer.m */; };
 		998230B51C0A16C700C5AD3A /* HTTPRequestHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 998230B41C0A16C700C5AD3A /* HTTPRequestHandler.m */; };
+		DE580F841CC82FAE00984952 /* bugA.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DE580F831CC82FAE00984952 /* bugA.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -137,6 +138,7 @@
 		998230911C0A14E700C5AD3A /* SVRadialGradientLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVRadialGradientLayer.m; sourceTree = "<group>"; };
 		998230B31C0A16C700C5AD3A /* HTTPRequestHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRequestHandler.h; sourceTree = "<group>"; };
 		998230B41C0A16C700C5AD3A /* HTTPRequestHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRequestHandler.m; sourceTree = "<group>"; };
+		DE580F831CC82FAE00984952 /* bugA.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bugA.jpg; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +169,7 @@
 		214AD8B518551D7D007630B7 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				DE580F831CC82FAE00984952 /* bugA.jpg */,
 				8984FDBD184B181800EF466C /* exitbutton.png */,
 				8984FDC1184B192C00EF466C /* aboutButton.png */,
 				898ACB6E18528AAF00FEB67D /* vermontButton.png */,
@@ -384,6 +387,7 @@
 				8984FDC0184B189300EF466C /* homelogo2.png in Resources */,
 				898ACB6F18528AAF00FEB67D /* vermontButton.png in Resources */,
 				8985BB8118469C8100660C5A /* bugB.jpg in Resources */,
+				DE580F841CC82FAE00984952 /* bugA.jpg in Resources */,
 				8984FCBE1832D88300824BB1 /* InfoPlist.strings in Resources */,
 				898ACB6D1852437C00FEB67D /* locationScreen.png in Resources */,
 				8984FCC71832D88300824BB1 /* Main.storyboard in Resources */,
