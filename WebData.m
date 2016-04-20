@@ -27,6 +27,10 @@
     if (self){
         managedObjectContext = cxt;
     }
+    
+    self.dateFormatter =  [[NSDateFormatter alloc] init];
+    [self.dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssz"];
+    
     return self;
 }
 
@@ -1304,6 +1308,7 @@ getPopulation
  ====================================================
  */
 -(NSDictionary *) getBugImageURLsWeb:(NSSet<NSString *> *) bugNames {
+    // DEPRECATED
     NSMutableArray<NSString *> *allImageNames = [[NSMutableArray<NSString *> alloc] init];
     NSMutableDictionary *allBugImageFilesAndURLs = [[NSMutableDictionary alloc] init];
     
@@ -1351,73 +1356,6 @@ getPopulation
     return allBugImageFilesAndURLs;
 }
 
-/*
- ====================================================
- getBugImageWeb
- 
- ====================================================
- */
--(void) storeBugImageWeb:(NSString *) bugName {
-    Invertebrate *inv = [self getBug:bugName];
-    UIImage *img = [self getImageWeb: inv.imageFile];
-    
-    //UIImage *img = [self getImageWeb:[thisBug.imageFile stringByReplacingOccurrencesOfString:@" " withString:@"_"]];
-    //NSLog([img description]);
-    if (img!= nil) {
-        NSString *s = [inv.imageFile stringByReplacingOccurrencesOfString:@"File:" withString:@""];
-        NSArray * se = [s componentsSeparatedByString:@"."];
-        if ([se count] > 1){
-            //pjc - debug image size, and duplicates - fix - make this a second thread
-            //NSLog(@"Saving %@ -- size: %0.0f, %0.0f -- %d of %d", s, [img size].height, [img size].width, i, bugs.count);
-            [self saveImage:img withFileName:[se objectAtIndex:0] ofType:[se objectAtIndex:1]];
-        }
-    }
-}
-
-/*
- ====================================================
- storeImagesFromURLs
- 
- ====================================================
- */
--(void) storeImagesFromURLs:(NSDictionary *) bugsAndURLs {
-    NSDate* lastUpdate = [self getLastSyncDate];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"EEE',' d MMM yyyy hh:mm:ss zzz"];  //
-    
-    for(NSString *imageFile in [bugsAndURLs allKeys]) {
-        //Check to see if image with filename exists
-        NSString *s = [imageFile stringByReplacingOccurrencesOfString:@"File:" withString:@""];
-        NSArray *se = [s componentsSeparatedByString:@"."];
-        UIImage *imageChk = [self loadImage:[se objectAtIndex:0] ofType:[se objectAtIndex:1]];
-        NSString *url = [bugsAndURLs objectForKey:imageFile];
-        BOOL imageOutOfDate = [[self getImageLastUpdateDate:dateFormatter: url] compare:lastUpdate] == NSOrderedDescending;
-        
-        if(imageChk == nil || imageOutOfDate)
-        {
-            NSLog(@"Downloading Image File: %@", imageFile);
-            
-            @autoreleasepool {
-                NSURL *urlRequest = [NSURL URLWithString:url];
-                NSData* data = [NSData dataWithContentsOfURL:urlRequest];
-                UIImage *img = [UIImage imageWithData:data];
-                
-                if (img!= nil) {
-                    if ([se count] > 1){
-                        //NSLog(@"Saving %@ -- size: %0.0f, %0.0f", s, [img size].height, [img size].width);
-                        [self saveImage:img withFileName:[se objectAtIndex:0] ofType:[se objectAtIndex:1]];
-                    }
-                } else {
-                    NSLog(@"Failed to Download Image File: %@", imageFile);
-                }
-            }
-        } else {
-            NSLog(@"Already have image, and is up to date: %@",imageFile);
-        }
-    }
-    
-    [self setLastUpdateDate];
-}
 
 /*
  ====================================================
@@ -1734,7 +1672,7 @@ getPopulation
     return [allStates allObjects];
 }
 
-- (NSDate *) getImageLastUpdateDate: (NSDateFormatter *) dateFormatter :(NSString *) imageUrl {
+- (NSDate *) getImageLastUpdateDate:(NSString *) imageUrl {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:imageUrl]];
     [request setHTTPMethod:@"HEAD"];
 
@@ -1745,7 +1683,7 @@ getPopulation
     if ([response respondsToSelector:@selector(allHeaderFields)]) {
         NSDictionary *dictionary = [response allHeaderFields];
         NSString *dateStr = [dictionary objectForKey:@"Last-Modified"];
-        NSDate* date = [dateFormatter dateFromString:dateStr];
+        NSDate* date = [self.dateFormatter dateFromString:dateStr];
         
         if(date != nil) {
             return date;
@@ -1777,6 +1715,89 @@ getPopulation
     }
     
     return lastSync;
+}
+
+- (NSMutableArray<NSDictionary*> *) getBugImageURLs:(NSSet<NSString *> *) bugNames {
+    NSMutableArray<NSString *> *allImageNames = [[NSMutableArray<NSString *> alloc] init];
+    NSMutableArray *imageData = [[NSMutableArray alloc] init];
+    
+    for(NSString *bugName in bugNames) {
+        Invertebrate *inv = [self getBug:bugName];
+        if(!(inv == nil)) {
+            if(inv.imageFile != nil)
+                [allImageNames addObject:inv.imageFile];
+            else
+                NSLog(@"nil imageFile for Bug: %@",inv.name);
+        }
+    }
+    
+    //Limit number of imageNames to 50 per call
+    NSArray<NSArray*> *imageNameSets = [self splitArray:allImageNames :50];
+    
+    for(NSArray<NSString*> *imageNames in imageNameSets) {
+        NSString *URLImageNames = [self appendStringsForURL:imageNames :@"" :@"|"];
+        
+        // The awesome new 400 px images
+        NSString *url = [NSString stringWithFormat:@"http://wikieducator.org/api.php?action=query&iiurlwidth=400&prop=imageinfo&iiprop=url|timestamp&format=json&titles=%@", URLImageNames];
+        NSURL *urlRequest = [NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        NSData* data = [NSData dataWithContentsOfURL:urlRequest];
+        
+        NSError *err = nil;
+        NSDictionary *bugs = [NSJSONSerialization JSONObjectWithData:data
+                                                             options:kNilOptions
+                                                               error:&err];
+        
+        if(err) {
+            NSLog(@"Error reading JSON data for %@",url);
+        }
+        
+        //Dig into JSON Dictionary
+        NSDictionary *topLevel = [bugs objectForKey:@"query"];
+        NSDictionary *pages = [topLevel objectForKey:@"pages"];
+        
+        for(NSDictionary *page in [pages allValues]) {
+            NSArray *imageInfo = [page objectForKey:@"imageinfo"];
+            NSMutableDictionary *imageDict = [[imageInfo objectAtIndex:0] mutableCopy];
+            [imageDict setObject:[page objectForKey:@"title"] forKey:@"FileName"];
+            [imageData addObject: imageDict];
+        }
+    }
+    return imageData;
+}
+
+- (void) saveBugImages:(NSMutableArray<NSDictionary*> *) bugImages {
+    NSDate* lastUpdate = [self getLastSyncDate];
+    
+    for(NSDictionary *image in bugImages) {
+        NSString *s = [[image objectForKey:@"FileName"] stringByReplacingOccurrencesOfString:@"File:" withString:@""];
+        NSArray *se = [s componentsSeparatedByString:@"."];
+        UIImage *imageChk = [self loadImage:[se objectAtIndex:0] ofType:[se objectAtIndex:1]];
+        NSString *url = [image objectForKey:@"thumburl"];
+        BOOL imageOutOfDate = [[self.dateFormatter dateFromString: [image objectForKey:@"timestamp"]] compare:lastUpdate] == NSOrderedDescending;
+        
+        if(imageChk == nil || imageOutOfDate) {
+            NSLog(@"Downloading Image File: %@", s);
+            
+            @autoreleasepool {
+                NSURL *urlRequest = [NSURL URLWithString:url];
+                NSData* data = [NSData dataWithContentsOfURL:urlRequest];
+                UIImage *img = [UIImage imageWithData:data];
+                
+                if (img!= nil) {
+                    if ([se count] > 1) {
+//                        NSLog(@"Saving %@ -- size: %0.0f, %0.0f", s, [img size].height, [img size].width);
+                        [self saveImage:img withFileName:[se objectAtIndex:0] ofType:[se objectAtIndex:1]];
+                    }
+                } else {
+                    NSLog(@"Failed to Download Image File: %@", s);
+                }
+            }
+        } else {
+            NSLog(@"Already have image, and is up to date: %@", s);
+        }
+    }
+    
+    [self setLastUpdateDate];
 }
 
 @end
