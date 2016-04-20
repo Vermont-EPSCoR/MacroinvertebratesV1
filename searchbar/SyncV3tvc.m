@@ -42,9 +42,12 @@
     }
     
     NSString *estimated_sec = [self findWhatKindOfInternet];
-    NSLog(@"%@",estimated_sec);
-    NSString *str = [NSString stringWithFormat: @"Tap on the streams you would like to download to your device. Syncing all of the streams will take ~ %@ seconds", estimated_sec];
-    NSString *firstRunMessage = [NSString stringWithFormat: @"Thank you for downloading the VT EPSCoR Macroinvertebrate app.  You must download the macroinvertebrate data from the internet before using this program.\n\nTap on the streams you would like to download to your device. Syncing all of the streams will take ~ %@ seconds", estimated_sec];
+    //NSLog(@"%@",estimated_sec);
+    NSString *str = [NSString stringWithFormat: @"Select the streams you would like to download to your device. Syncing all of the streams will take ~%@ seconds.", estimated_sec];
+    NSString *firstRunMessage = [NSString stringWithFormat: @"Thank you for downloading the VT EPSCoR Macroinvertebrate app.  You must download the macroinvertebrate data from the Internet before using this program.\n\nSelect the streams you would like to download to your device. Syncing all of the streams will take ~%@ seconds.", estimated_sec];
+    if([estimated_sec isEqualToString:@"No Internet"]){
+        firstRunMessage = [NSString stringWithFormat: @"Thank you for downloading the VT EPSCoR Macroinvertebrate app.  You must download the macroinvertebrate data from the Internet before using this program.\n\nPlease sync after connecting to the Internet."];
+    }
     [self fetchRestData];
     UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Vermont EPSCOR"
                                                      message:([delegate isFirstRun]) ? firstRunMessage : str
@@ -109,7 +112,7 @@
     [super didReceiveMemoryWarning];
 }
 
-- (void)fetchRestData; {
+- (void)fetchRestData {
     NSURL *url = [NSURL URLWithString:weburl];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [NSURLConnection sendAsynchronousRequest:request
@@ -145,6 +148,9 @@
                                    
                                    [self.tableView reloadData];
                                    [self.tableView numberOfRowsInSection:[_streamsArray count]];
+                                   
+                                   if([delegate isFirstRun])
+                                       [self selectAll];
                                    //[self.tableView reloadRowsAtIndexPaths:0 withRowAnimation:UITableViewRowAnimationLeft];
                                    // [SVProgressHUD dismiss];
                                }
@@ -282,7 +288,7 @@
         if(success){
             
             UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Sync Complete"
-                                                             message:@"Congratulations, Sync Complete"
+                                                             message:@"Sync complete."
                                                             delegate:self
                                                    cancelButtonTitle:@"OK"
                                                    otherButtonTitles: nil];
@@ -291,7 +297,7 @@
         }
         else{
             UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Sync Failed"
-                                                             message:@"We apologize. Sync failed. Please check Network Connection and try again"
+                                                             message:@"Sync failed. Please check your Internet connection and try again."
                                                             delegate:self
                                                    cancelButtonTitle:@"OK"
                                                    otherButtonTitles: nil];
@@ -336,7 +342,10 @@
 }
 
 - (IBAction)selectAll:(UIBarButtonItem *)sender {
-    // pjc fix
+    [self selectAll];
+}
+
+- (void)selectAll {
     // First, remove all streams from selectionsArray so we don't get duplicates
     [self.selectionsArray removeAllObjects];
     
