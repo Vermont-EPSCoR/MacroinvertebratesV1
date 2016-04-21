@@ -31,6 +31,8 @@
     self.dateFormatter =  [[NSDateFormatter alloc] init];
     [self.dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssz"];
     
+    // REGEXP: A string enclosed in square braces beginning with http and then any character other than space, at least once,
+    // then a space and any character other than a right square brace at least once, and a trailing right square brace.
     self.wikiStyleLink = [NSRegularExpression regularExpressionWithPattern:@"\\[http[^ ]+ ([^]]+)\\]"
                                                                    options:NSRegularExpressionCaseInsensitive
                                                                      error:nil];
