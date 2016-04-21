@@ -31,6 +31,10 @@
     self.dateFormatter =  [[NSDateFormatter alloc] init];
     [self.dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssz"];
     
+    self.wikiStyleLink = [NSRegularExpression regularExpressionWithPattern:@"\\[http[^ ]+ ([^]]+)\\]"
+                                                                   options:NSRegularExpressionCaseInsensitive
+                                                                     error:nil];
+    
     return self;
 }
 
@@ -325,8 +329,6 @@ setFeedbackLabel - pjc
             }
             
             else if ([label isEqualToString:@"text"]) {
-                value = [value stringByReplacingOccurrencesOfString:@"[" withString:@""];
-                value = [value stringByReplacingOccurrencesOfString:@"]" withString:@""];
                 result.text = value;
                 
                 // Bijay: added this to accomodate stop signs
@@ -337,9 +339,13 @@ setFeedbackLabel - pjc
                     result.text = [arrayWithTwoStrings objectAtIndex:0];
                     //NSLog(@"%@", result.text);
                 }
+                
+                // Put this after the check for Stop. Maybe we'll save a bit of processing time.
+                result.text = [self fixWikiStyleLinks:result.text];
             }
         }
     }
+    
     return result;
 }
 
@@ -1799,6 +1805,34 @@ getPopulation
     
     [self setLastUpdateDate];
     NSLog(@"Image Download Complete!");
+}
+
+- (NSString *) fixWikiStyleLinks: (NSString *) description {
+    NSArray *matches = [self.wikiStyleLink matchesInString:description
+                                      options:0
+                                        range:NSMakeRange(0, [description length])];
+    
+    NSMutableDictionary *matchPairs = [NSMutableDictionary dictionaryWithCapacity:[matches count]];
+    
+    // Build up pairs of whole strings and their replacements
+    // We cannot replace yet because that would invalidate the ranges
+    for (NSTextCheckingResult *match in matches) {
+        NSRange matchRange = [match range];
+        NSRange firstHalfRange = [match rangeAtIndex:1];
+        
+        NSString *wholeString = [description substringWithRange:matchRange];
+        NSString *replacement = [description substringWithRange:firstHalfRange];
+        
+        [matchPairs setObject:replacement forKey:wholeString];
+    }
+    
+    // Perform the replacement with string for string
+    for (NSString *wholeString in [matchPairs allKeys]) {
+        NSString *replacement = [matchPairs objectForKey:wholeString];
+        description = [description stringByReplacingOccurrencesOfString:wholeString withString:replacement];
+    }
+    
+    return description;
 }
 
 @end
