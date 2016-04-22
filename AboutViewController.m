@@ -27,8 +27,12 @@
 -(void)viewDidLoad {
     [super viewDidLoad];
     
+    if ([self respondsToSelector:@selector(setEdgesForExtendedLayout:)]) { // if iOS 7
+        self.edgesForExtendedLayout = UIRectEdgeNone; //layout adjustements
+    }
+    
     // Tags are integers? Really?
-    UILabel *label = [self.view viewWithTag:1];
+    UITextView *label = [self.view viewWithTag:1];
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *aboutContent = [userDefaults stringForKey:@"about"];
     
@@ -36,6 +40,12 @@
     if([aboutContent length] > 0) {
         label.text = aboutContent;
     }
+    
+    NSRange range;
+    range.location = 0;
+    range.length = 0;
+//    [label scrollRangeToVisible:range];
+    [label scrollRectToVisible:CGRectMake(0,0,0,0) animated:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

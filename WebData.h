@@ -24,6 +24,8 @@
 @property UILabel *feedbackLabel;
 @property NSDateFormatter *dateFormatter;
 
+@property NSRegularExpression *wikiStyleLink;
+
 /*
  //pjc
 - (void)setFeedbackLabel:(UILabel *) feedbackLabelIn;
@@ -120,5 +122,7 @@
 - (void) saveBugImages:(NSMutableArray<NSDictionary*> *) bugImages;
 
 - (void) syncAppAbout;
+
+- (NSString *) fixWikiStyleLinks: (NSString *) description;
 
 @end
