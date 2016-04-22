@@ -1821,7 +1821,8 @@ getPopulation
     
     TFHpple *htmlDoc = [[TFHpple alloc] initWithHTMLData:[((TFHppleElement *)[elements firstObject]).content dataUsingEncoding:NSUTF8StringEncoding]];
     
-    NSArray *paragraphs = [htmlDoc searchWithXPathQuery:@"//p[position()>2]"];
+    // Select all paragraph elements inside of the div with id "content-for-app"
+    NSArray *paragraphs = [htmlDoc searchWithXPathQuery:@"//div[@id='content-for-app']/p"];
     
     if([paragraphs count] == 0) {
         NSLog(@"Unable to locate paragraph elements in the HTML");
@@ -1830,8 +1831,8 @@ getPopulation
     NSMutableString *description = [[NSMutableString alloc] init];
     
     for(TFHppleElement *element in paragraphs) {
-        [description appendString:[NSString stringWithFormat:@"\t%@\n", element.content]];
-        NSLog(@"APPENDING: %@", element.content);
+        // Ensure each paragraph is indented, and that there are two newlines after the content.
+        [description appendString:[NSString stringWithFormat:@"\t%@\n\n", [element.content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]]];
     }
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
