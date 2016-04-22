@@ -9,6 +9,7 @@
 #import "WebData.h"
 #import "UIImage+Resize.h"
 #import "XMLDelegateBug.h"
+#import "hpple/TFHpple.h"
 
 @implementation WebData
 
@@ -1799,6 +1800,29 @@ getPopulation
     
     [self setLastUpdateDate];
     NSLog(@"Image Download Complete!");
+}
+
+- (void) syncAppAbout {
+    NSLog(@"Doing this");
+    NSData *xml = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://wikieducator.org/AboutStreamsApp"]];
+    
+    
+    TFHpple * doc       = [[TFHpple alloc] initWithXMLData:xml];
+    NSArray * elements  = [doc searchWithXPathQuery:@"//text]"];
+    
+    if([elements count] != 1) {
+        NSLog(@"There's a problem");
+        return;
+    }
+    
+    //TODO Need to put this inside an HTML stub or at the very least an XML root
+    TFHpple *htmlDoc = [[TFHpple alloc] initWithHTMLData:[((TFHppleElement *)[elements firstObject]).content dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    NSArray *paragraphs = [htmlDoc searchWithXPathQuery:@"//p[position()>1]/text()"];
+    
+    for(TFHppleElement *element in paragraphs) {
+        NSLog(@"%@", element);
+    }
 }
 
 @end

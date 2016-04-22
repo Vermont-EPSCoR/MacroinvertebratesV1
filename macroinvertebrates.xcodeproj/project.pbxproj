@@ -54,6 +54,10 @@
 		998230941C0A14E700C5AD3A /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 9982308F1C0A14E700C5AD3A /* SVProgressHUD.m */; };
 		998230951C0A14E700C5AD3A /* SVRadialGradientLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 998230911C0A14E700C5AD3A /* SVRadialGradientLayer.m */; };
 		998230B51C0A16C700C5AD3A /* HTTPRequestHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 998230B41C0A16C700C5AD3A /* HTTPRequestHandler.m */; };
+		DE2EA01B1CC9A55A00CF7AB7 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = DE2EA01A1CC9A55A00CF7AB7 /* libxml2.tbd */; };
+		DE2EA0311CC9ABB100CF7AB7 /* XPathQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = DE2EA02B1CC9ABB100CF7AB7 /* XPathQuery.m */; };
+		DE2EA0321CC9ABB100CF7AB7 /* TFHpple.m in Sources */ = {isa = PBXBuildFile; fileRef = DE2EA02D1CC9ABB100CF7AB7 /* TFHpple.m */; };
+		DE2EA0331CC9ABB100CF7AB7 /* TFHppleElement.m in Sources */ = {isa = PBXBuildFile; fileRef = DE2EA02F1CC9ABB100CF7AB7 /* TFHppleElement.m */; };
 		DE580F841CC82FAE00984952 /* bugA.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DE580F831CC82FAE00984952 /* bugA.jpg */; };
 /* End PBXBuildFile section */
 
@@ -138,6 +142,13 @@
 		998230911C0A14E700C5AD3A /* SVRadialGradientLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVRadialGradientLayer.m; sourceTree = "<group>"; };
 		998230B31C0A16C700C5AD3A /* HTTPRequestHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRequestHandler.h; sourceTree = "<group>"; };
 		998230B41C0A16C700C5AD3A /* HTTPRequestHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRequestHandler.m; sourceTree = "<group>"; };
+		DE2EA01A1CC9A55A00CF7AB7 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
+		DE2EA02B1CC9ABB100CF7AB7 /* XPathQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XPathQuery.m; path = hpple/XPathQuery.m; sourceTree = SOURCE_ROOT; };
+		DE2EA02C1CC9ABB100CF7AB7 /* TFHpple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFHpple.h; path = hpple/TFHpple.h; sourceTree = SOURCE_ROOT; };
+		DE2EA02D1CC9ABB100CF7AB7 /* TFHpple.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TFHpple.m; path = hpple/TFHpple.m; sourceTree = SOURCE_ROOT; };
+		DE2EA02E1CC9ABB100CF7AB7 /* TFHppleElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFHppleElement.h; path = hpple/TFHppleElement.h; sourceTree = SOURCE_ROOT; };
+		DE2EA02F1CC9ABB100CF7AB7 /* TFHppleElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TFHppleElement.m; path = hpple/TFHppleElement.m; sourceTree = SOURCE_ROOT; };
+		DE2EA0301CC9ABB100CF7AB7 /* XPathQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPathQuery.h; path = hpple/XPathQuery.h; sourceTree = SOURCE_ROOT; };
 		DE580F831CC82FAE00984952 /* bugA.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bugA.jpg; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -146,6 +157,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DE2EA01B1CC9A55A00CF7AB7 /* libxml2.tbd in Frameworks */,
 				216CEF5F185505BA0004F909 /* CoreData.framework in Frameworks */,
 				8984FCB61832D88300824BB1 /* CoreGraphics.framework in Frameworks */,
 				8984FCB81832D88300824BB1 /* UIKit.framework in Frameworks */,
@@ -209,6 +221,7 @@
 		8984FCB21832D88300824BB1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DE2EA01A1CC9A55A00CF7AB7 /* libxml2.tbd */,
 				998230891C0A14E700C5AD3A /* SVProgressHUD */,
 				216CEF5E185505BA0004F909 /* CoreData.framework */,
 				8984FCB31832D88300824BB1 /* Foundation.framework */,
@@ -222,6 +235,12 @@
 		8984FCB91832D88300824BB1 /* macroinvertebrates */ = {
 			isa = PBXGroup;
 			children = (
+				DE2EA02B1CC9ABB100CF7AB7 /* XPathQuery.m */,
+				DE2EA02C1CC9ABB100CF7AB7 /* TFHpple.h */,
+				DE2EA02D1CC9ABB100CF7AB7 /* TFHpple.m */,
+				DE2EA02E1CC9ABB100CF7AB7 /* TFHppleElement.h */,
+				DE2EA02F1CC9ABB100CF7AB7 /* TFHppleElement.m */,
+				DE2EA0301CC9ABB100CF7AB7 /* XPathQuery.h */,
 				29D251DC1C9B347300BE68B9 /* XMLDelegateBug.h */,
 				29D251DD1C9B367200BE68B9 /* XMLDelegateBug.m */,
 				8984FCC21832D88300824BB1 /* macroinvAppDelegate.h */,
@@ -418,10 +437,12 @@
 			files = (
 				21ADA06418551FCD00B2806A /* WebData.m in Sources */,
 				216CEF641855085D0004F909 /* DataModel.xcdatamodeld in Sources */,
+				DE2EA0311CC9ABB100CF7AB7 /* XPathQuery.m in Sources */,
 				998230921C0A14E700C5AD3A /* SVIndefiniteAnimatedView.m in Sources */,
 				8984FCED1832D9B100824BB1 /* StreamViewController.m in Sources */,
 				89880CD1185267BE000F30FD /* GpsOrLocationViewController.m in Sources */,
 				21ADA0AA185527CA00B2806A /* Invertebrate.m in Sources */,
+				DE2EA0321CC9ABB100CF7AB7 /* TFHpple.m in Sources */,
 				21ADA0AE185529FC00B2806A /* StreamData.m in Sources */,
 				998230B51C0A16C700C5AD3A /* HTTPRequestHandler.m in Sources */,
 				998230951C0A14E700C5AD3A /* SVRadialGradientLayer.m in Sources */,
@@ -438,6 +459,7 @@
 				998230941C0A14E700C5AD3A /* SVProgressHUD.m in Sources */,
 				8987DD5A184704C5005D112E /* DetailsViewController.m in Sources */,
 				21ADA0AB185527CA00B2806A /* Stream.m in Sources */,
+				DE2EA0331CC9ABB100CF7AB7 /* TFHppleElement.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -560,8 +582,13 @@
 				CURRENT_PROJECT_VERSION = 2.0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "searchbar/macroinvertebrates-Prefix.pch";
+				"HEADER_SEARCH_PATHS[arch=*]" = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = "searchbar/macroinvertebrates-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebratesv2;
 				PRODUCT_NAME = macroinvertebrates;
 				PROVISIONING_PROFILE = "";
@@ -580,8 +607,13 @@
 				CURRENT_PROJECT_VERSION = 2.0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "searchbar/macroinvertebrates-Prefix.pch";
+				"HEADER_SEARCH_PATHS[arch=*]" = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = "searchbar/macroinvertebrates-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebratesv2;
 				PRODUCT_NAME = macroinvertebrates;
 				PROVISIONING_PROFILE = "";
