@@ -40,12 +40,6 @@
     if([aboutContent length] > 0) {
         label.text = aboutContent;
     }
-    
-    NSRange range;
-    range.location = 0;
-    range.length = 0;
-//    [label scrollRangeToVisible:range];
-    [label scrollRectToVisible:CGRectMake(0,0,0,0) animated:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
