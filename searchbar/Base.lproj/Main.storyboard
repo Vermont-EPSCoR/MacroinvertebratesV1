@@ -182,7 +182,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="J5H-ed-Ovz">
-                                <rect key="frame" x="48" y="390.00000128864252" width="224" height="50"/>
+                                <rect key="frame" x="48" y="390" width="224" height="50.000001403544736"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <state key="normal" image="about">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -202,7 +202,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="plB-nf-XiI">
-                                <rect key="frame" x="48" y="298.99999449874758" width="224" height="50"/>
+                                <rect key="frame" x="48" y="299" width="224" height="50.000000202974896"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <state key="normal" title="Button" image="start">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -230,7 +230,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="5ad-bL-Rka">
-                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5ad-bL-Rka" id="497-HG-krT">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -410,40 +410,23 @@ Sync may take up to 5 minutes.</string>
         <scene sceneID="WMu-yC-u5c">
             <objects>
                 <viewController id="bmi-2B-2Lf" customClass="AboutViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="HzR-d8-Dxg">
+                    <textView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="scaleToFill" editable="NO" textAlignment="natural" id="nt7-Sr-Ici">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <scrollView autoresizesSubviews="NO" multipleTouchEnabled="YES" contentMode="scaleToFill" id="SsA-kq-UHA">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="600"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ztQ-Rh-Wkq">
-                                        <rect key="frame" x="10" y="0.0" width="300" height="540"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <string key="text">     The Experimental Program to Stimulate Competitive Research (EPSCoR) is a program designed to fulfill the National Science Foundation's (NSF) mandate to promote scientific progress nationwide. The EPSCoR program is directed at those jurisdictions that have historically received lesser amounts of NSF funding. Through this program, NSF establishes partnerships with government, higher education and industry that are designed to effect lasting improvements in a state's or region's research infrastructure, R&amp;D capacity and hence, its national R&amp;D competitiveness.
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <mutableString key="text">     The Experimental Program to Stimulate Competitive Research (EPSCoR) is a program designed to fulfill the National Science Foundation's (NSF) mandate to promote scientific progress nationwide. The EPSCoR program is directed at those jurisdictions that have historically received lesser amounts of NSF funding. Through this program, NSF establishes partnerships with government, higher education and industry that are designed to effect lasting improvements in a state's or region's research infrastructure, R&amp;D capacity and hence, its national R&amp;D competitiveness.
 
      Beginning in 2008, Vermont EPSCoR, together with a large number of interns and collaborating high school teams, has collected water quality and macroinvertebrate community data on a number of small streams in Vermont, New York, and Puerto Rico. The project gathers valuable research quality data while also training a new generation of scientists.
 
      Contributors to this resource are far too numerous to mention them all, but two deserving of particular mention are Brian Cummingham, who established the initial structure of the web resources in 2009, and Erin Hayes-Pontius, who developed the bulk of the content and photographs between 2009 and 2011.
 
-     Microinvertebrate data and images are provided by WikiEducator under the Creative Commons Attribution Share-Alike License.</string>
-                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                        <color key="textColor" red="0.15294117647058825" green="0.25490196078431371" blue="0.52941176470588236" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                        <string key="userLabel">Label - The Experimental Program to Stimulate Competitive Research (EPSCoR) is a program designed to fulfill the National Science Foundation's (NSF) mandate to promote scientific progress nationwide. The EPSCoR program is directed at those jurisdictions that have historically received lesser amounts of NSF Research and Development (R&amp;D) funding. Twenty-eight states, the Commonwealth of Puerto Rico, the U. S. Virgin Islands and Guam are currently eligible to participate. Through this program, NSF establishes partnerships with government, higher education and industry that are designed to effect lasting improvements in a state's or region's research infrastructure, R&amp;D capacity and hence, its national R&amp;D competitiveness.  Beginning in 2008, Vermont EPSCoR together with a large number of collaborating high school teams has collected water quality and macroinvertebrate community data on a number of small streams in Vermont, New York, and Puerto Rico. The project gathers valuable research quality data while also training a new generation of scientists.</string>
-                                    </label>
-                                </subviews>
-                            </scrollView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
+     Microinvertebrate data and images are provided by WikiEducator under the Creative Commons Attribution Share-Alike License.</mutableString>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                    </textView>
                     <navigationItem key="navigationItem" id="8AG-Eu-RXR"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="600"/>
-                    <connections>
-                        <outlet property="scrollView" destination="SsA-kq-UHA" id="27c-a3-7Md"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ngx-qf-j8I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

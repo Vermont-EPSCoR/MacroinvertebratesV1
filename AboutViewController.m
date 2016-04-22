@@ -27,8 +27,15 @@
 -(void)viewDidLoad {
     [super viewDidLoad];
     
-    // pjc - set scrollView size
-    [scrollView setContentSize:CGSizeMake(scrollView.bounds.size.width, 540)];
+    // Tags are integers? Really?
+    UILabel *label = [self.view viewWithTag:1];
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *aboutContent = [userDefaults stringForKey:@"about"];
+    
+    // Protect against the content not being set
+    if([aboutContent length] > 0) {
+        label.text = aboutContent;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {

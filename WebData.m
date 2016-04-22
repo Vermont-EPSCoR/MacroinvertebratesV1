@@ -1804,25 +1804,40 @@ getPopulation
 
 - (void) syncAppAbout {
     NSLog(@"Doing this");
-    NSData *xml = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://wikieducator.org/AboutStreamsApp"]];
-    
+    NSData *xml = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://wikieducator.org/api.php?action=parse&page=AboutStreamsApp&format=xml"]];
     
     TFHpple * doc       = [[TFHpple alloc] initWithXMLData:xml];
-    NSArray * elements  = [doc searchWithXPathQuery:@"//text]"];
+    NSArray * elements  = [doc searchWithXPathQuery:@"//text"];
     
     if([elements count] != 1) {
-        NSLog(@"There's a problem");
+        NSLog(@"Unable to load the text element of the Streams About Section");
+        
+        for(TFHppleElement *elem in elements) {
+            NSLog(@"ELEMENT: %@", elem);
+        }
+        
         return;
     }
     
-    //TODO Need to put this inside an HTML stub or at the very least an XML root
     TFHpple *htmlDoc = [[TFHpple alloc] initWithHTMLData:[((TFHppleElement *)[elements firstObject]).content dataUsingEncoding:NSUTF8StringEncoding]];
     
-    NSArray *paragraphs = [htmlDoc searchWithXPathQuery:@"//p[position()>1]/text()"];
+    NSArray *paragraphs = [htmlDoc searchWithXPathQuery:@"//p[position()>2]"];
+    
+    if([paragraphs count] == 0) {
+        NSLog(@"Unable to locate paragraph elements in the HTML");
+    }
+    
+    NSMutableString *description = [[NSMutableString alloc] init];
     
     for(TFHppleElement *element in paragraphs) {
-        NSLog(@"%@", element);
+        [description appendString:[NSString stringWithFormat:@"\t%@\n", element.content]];
+        NSLog(@"APPENDING: %@", element.content);
     }
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    [userDefaults setObject:description forKey:@"about"];
+    [userDefaults synchronize];
 }
 
 @end
