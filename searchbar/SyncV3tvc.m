@@ -216,7 +216,6 @@
     // [delegate.window addSubview:spinner];
     
     [delegate.webData clearBugs];
-    
     [delegate.webData clearStreams];
     
     // if none of the items are selected, pull all of them otherwise perform selective sync

@@ -1811,7 +1811,7 @@ getPopulation
 }
 
 - (void) syncAppAbout {
-    NSLog(@"Doing this");
+    NSLog(@"Syncing About Page...");
     NSData *xml = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://wikieducator.org/api.php?action=parse&page=AboutStreamsApp&format=xml"]];
     
     TFHpple * doc       = [[TFHpple alloc] initWithXMLData:xml];
@@ -1833,7 +1833,7 @@ getPopulation
     NSArray *paragraphs = [htmlDoc searchWithXPathQuery:@"//div[@id='content-for-app']/p"];
     
     if([paragraphs count] == 0) {
-        NSLog(@"Unable to locate paragraph elements in the HTML");
+        NSLog(@"Unable to locate paragraph elements in the HTML of the wiki About page");
     }
     
     NSMutableString *description = [[NSMutableString alloc] init];
@@ -1847,6 +1847,8 @@ getPopulation
     
     [userDefaults setObject:description forKey:@"about"];
     [userDefaults synchronize];
+    
+    NSLog(@"Finished syncing About Page");
 }
 
 - (NSString *) fixWikiStyleLinks: (NSString *) description {
