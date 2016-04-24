@@ -9,6 +9,7 @@
 #import "WebData.h"
 #import "UIImage+Resize.h"
 #import "XMLDelegateBug.h"
+#import "hpple/TFHpple.h"
 
 @implementation WebData
 
@@ -1807,6 +1808,45 @@ getPopulation
     
     [self setLastUpdateDate];
     NSLog(@"Image Download Complete!");
+}
+
+- (void) syncAppAbout {
+    NSLog(@"Doing this");
+    NSData *xml = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://wikieducator.org/api.php?action=parse&page=AboutStreamsApp&format=xml"]];
+    
+    TFHpple * doc       = [[TFHpple alloc] initWithXMLData:xml];
+    NSArray * elements  = [doc searchWithXPathQuery:@"//text"];
+    
+    if([elements count] != 1) {
+        NSLog(@"Unable to load the text element of the Streams About Section");
+        
+        for(TFHppleElement *elem in elements) {
+            NSLog(@"ELEMENT: %@", elem);
+        }
+        
+        return;
+    }
+    
+    TFHpple *htmlDoc = [[TFHpple alloc] initWithHTMLData:[((TFHppleElement *)[elements firstObject]).content dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    // Select all paragraph elements inside of the div with id "content-for-app"
+    NSArray *paragraphs = [htmlDoc searchWithXPathQuery:@"//div[@id='content-for-app']/p"];
+    
+    if([paragraphs count] == 0) {
+        NSLog(@"Unable to locate paragraph elements in the HTML");
+    }
+    
+    NSMutableString *description = [[NSMutableString alloc] init];
+    
+    for(TFHppleElement *element in paragraphs) {
+        // Ensure each paragraph is indented, and that there are two newlines after the content.
+        [description appendString:[NSString stringWithFormat:@"\t%@\n\n", [element.content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]]];
+    }
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    [userDefaults setObject:description forKey:@"about"];
+    [userDefaults synchronize];
 }
 
 - (NSString *) fixWikiStyleLinks: (NSString *) description {

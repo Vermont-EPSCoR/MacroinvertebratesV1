@@ -223,6 +223,8 @@
     if ([self updateLabelBarButton]){
         BOOL success = false;
         
+        [delegate.webData syncAppAbout];
+        
         NSDictionary *streamsAndPopulations = [delegate.webData getStreamsWeb:self.selectionsArray];
         NSMutableSet<NSString *> *allbugNames = [[NSMutableSet<NSString *> alloc] init];
         for(NSArray* bugs in [streamsAndPopulations allValues])

@@ -91,7 +91,7 @@
 
 - (NSString *) myStripper: (NSString *) str;
 
-- (void) storeBugImageWeb:(NSString *) bugName;
+//- (void) storeBugImageWeb:(NSString *) bugName;
 
 //- (void) storeImagesFromURLs:(NSDictionary *) bugsAndURLs;
 
@@ -120,6 +120,8 @@
 - (NSMutableArray<NSDictionary*> *) getBugImageURLs:(NSSet<NSString *> *) bugNames;
 
 - (void) saveBugImages:(NSMutableArray<NSDictionary*> *) bugImages;
+
+- (void) syncAppAbout;
 
 - (NSString *) fixWikiStyleLinks: (NSString *) description;
 
