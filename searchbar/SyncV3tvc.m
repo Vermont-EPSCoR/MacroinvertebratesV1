@@ -29,18 +29,6 @@
     self.defaultsSelectionsArray = [[NSMutableArray alloc] init];
     delegate = (macroinvAppDelegate *) [[UIApplication sharedApplication] delegate]; // to refer to
     
-    
-    //[SVProgressHUD show];
-    NSArray *allStreams = [delegate.webData getAllStreams];
-    //NSLog(@"HERE%@", [delegate.webData getAllStreams]);
-    for (StreamData *stream in allStreams){
-        [self.selectionsArray addObject:[stream.title stringByTrimmingCharactersInSet:
-                                         [NSCharacterSet whitespaceCharacterSet]]];
-        [self.defaultsSelectionsArray addObject:[stream.title stringByTrimmingCharactersInSet:
-                                         [NSCharacterSet whitespaceCharacterSet]]];
-        //NSLog(@"In List %@", stream.title);
-    }
-    
     NSString *estimated_sec = [self findWhatKindOfInternet];
     //NSLog(@"%@",estimated_sec);
     NSString *str = [NSString stringWithFormat: @"Select the streams you would like to download to your device. Syncing all of the streams will take ~%@ seconds.", estimated_sec];
@@ -56,6 +44,16 @@
                                            otherButtonTitles: nil];
     [alert show];
     [self updateLabelBarButton];
+    
+    NSArray *allStreams = [delegate.webData getAllStreams];
+    //NSLog(@"HERE%@", [delegate.webData getAllStreams]);
+    for (StreamData *stream in allStreams){
+        [self.selectionsArray addObject:[stream.title stringByTrimmingCharactersInSet:
+                                         [NSCharacterSet whitespaceCharacterSet]]];
+        [self.defaultsSelectionsArray addObject:[stream.title stringByTrimmingCharactersInSet:
+                                                 [NSCharacterSet whitespaceCharacterSet]]];
+        //NSLog(@"In List %@", stream.title);
+    }
 }
 
 - (NSString *)findWhatKindOfInternet{
