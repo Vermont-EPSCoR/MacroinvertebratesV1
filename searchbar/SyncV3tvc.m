@@ -202,12 +202,41 @@
 - (IBAction)pullSelectedStreams:(UIBarButtonItem *)sender {
     //NSLog(@"Show Indicator");
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeBlack];
-    [SVProgressHUD showWithStatus:@"Downloading Streams ..."];
+    [SVProgressHUD show];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self getThemAll];
+    });
+    /*
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         // Your code to run on the main queue/thread
         [self getThemAll];
         [SVProgressHUD dismiss];
     }];
+     */
+}
+
+- (void)setProgressStatus:(NSString*)status {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //[SVProgressHUD dismiss];
+        [SVProgressHUD setStatus:status];
+    });
+}
+
+- (void)dismissProgressStatus {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [SVProgressHUD dismiss];
+    });
+}
+
+- (void)showAlert:(NSString*)title text:(NSString*)text {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:title
+                                                         message:text
+                                                        delegate:self
+                                               cancelButtonTitle:@"OK"
+                                               otherButtonTitles: nil];
+        [alert show];
+    });
 }
 
 - (BOOL) getThemAll {
@@ -219,20 +248,30 @@
     [delegate.webData clearStreams];
     
     // if none of the items are selected, pull all of them otherwise perform selective sync
-    if ([self updateLabelBarButton]){
-        BOOL success = false;
+    //if ([self updateLabelBarButton]){
+    //    BOOL success = false;
         
+        [self setProgressStatus:@"Downloading About Page"];
         [delegate.webData syncAppAbout];
         
+        [self setProgressStatus:@"Downloading Streams"];
         NSDictionary *streamsAndPopulations = [delegate.webData getStreamsWeb:self.selectionsArray];
         NSMutableSet<NSString *> *allbugNames = [[NSMutableSet<NSString *> alloc] init];
         for(NSArray* bugs in [streamsAndPopulations allValues])
             [allbugNames addObjectsFromArray:bugs];
-        //[SVProgressHUD showProgress:.33 status:@"Downloading Bugs ..."];
+        [self setProgressStatus:@"Downloading Bugs"];
         NSArray<Invertebrate *> *allBugs = [delegate.webData getBugsWeb:[allbugNames allObjects]];
-        //[SVProgressHUD showProgress:.66 status:@"Linking Bugs to Streams ..."];
-        success = [delegate.webData linkBugsToStreams:allBugs :streamsAndPopulations];
+        [self setProgressStatus:@"Linking Bugs to Streams"];
+        [delegate.webData linkBugsToStreams:allBugs :streamsAndPopulations];
 //        NSDictionary *allBugsWithImageURLs = [delegate.webData getBugImageURLsWeb:allbugNames];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+            NSLog(@"Getting Image URLs");
+            NSMutableArray<NSDictionary *> *bugImages = [delegate.webData getBugImageURLs:allbugNames];
+            [delegate.webData saveBugImages:bugImages];
+        });
+        
+        /*
+        NSLog(@"Getting Image URLs");
         NSMutableArray<NSDictionary *> *bugImages = [delegate.webData getBugImageURLs:allbugNames];
         NSLog(@"Done syncing... getting pictures");
         //[delegate.webData storeImagesFromURLs:allBugsWithImageURLs];
@@ -242,7 +281,8 @@
         double thisPriority = [[NSThread currentThread] threadPriority];
         [imageDLThread setThreadPriority:(thisPriority*.5)];
         [imageDLThread start];  // Actually start the thread
-        
+         */
+        [self dismissProgressStatus];
         /*
         for(NSString *bug in allbugNames) {
             NSLog(@"Getting Image for: %@",bug);
@@ -259,16 +299,8 @@
             NSLog(@"Update Message pop here");
         }
 */
-        if(success){
-            
-            UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Sync Complete"
-                                                             message:@"Congratulations, Sync Complete.\nImages will continue to download in the background."
-                                                            delegate:self
-                                                   cancelButtonTitle:@"OK"
-                                                   otherButtonTitles: nil];
-            [alert show];
-            
-        }
+        [self showAlert:@"Sync Complete" text:@"Sync Complete.\nImages will continue to download in the background."];
+ /*
         else{
             UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Sync Failed"
                                                              message:@"Please select some and try again. Also, make sure you have a proper internet connection."
@@ -279,7 +311,9 @@
         }
 
     }
-    else{
+  */
+    /*
+     else{
         
         [UIApplication sharedApplication].idleTimerDisabled = YES;
         [[self view] setNeedsDisplay];
@@ -306,6 +340,7 @@
         }
         [UIApplication sharedApplication].idleTimerDisabled = NO;
     }
+     */
     return true;
 
 }

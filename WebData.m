@@ -538,7 +538,7 @@ setFeedbackLabel - pjc
                 NSLog(@"Stream Not Found: %@", streamName);
             } else {
                 for(NSString *bugName in [streams objectForKey:streamName]){
-                    //NSLog(@"Linking Bug %@ to Stream %@", bugName, streamName);
+                    NSLog(@"Linking Bug %@ to Stream %@", bugName, streamName);
                     InvertebrateData *inv = [self getBugData:bugName];
                     if(inv == nil) {
                         NSLog(@"Bug Not Found: %@ in Stream: %@", bugName, streamName);
@@ -546,14 +546,13 @@ setFeedbackLabel - pjc
                         [stream addContainsObject:inv];
                         [inv addLivesInObject:stream];
                     }
+                    if (![context save:&error]) {
+                        NSLog(@"Error Saving Linkage Data for Stream: %@", streamName);
+                        NSLog(@"%@", [error localizedDescription]);
+                        success = false;
+                    }
                 }
             }
-            if (![context save:&error]) {
-                NSLog(@"Error Saving Linkage Data for Stream: %@", streamName);
-                NSLog(@"%@", [error localizedDescription]);
-                success = false;
-            }
-
         }
     }
     return success;
