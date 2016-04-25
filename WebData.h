@@ -23,6 +23,7 @@
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property UILabel *feedbackLabel;
 @property NSDateFormatter *dateFormatter;
+@property BOOL downloadInProgress;
 
 @property NSRegularExpression *wikiStyleLink;
 

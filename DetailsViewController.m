@@ -59,11 +59,14 @@
 //    LOOK HERE TO TEST DetailView
 //    Uncomment the line below to test
 //    image = nil;
-
-    if(image != nil) {
+    
+    if(image != nil) {  // Show real image
         [invertebrateImage setImage:image];
-    } else {
-        [invertebrateImage setImage:[UIImage imageNamed:@"bugA.jpg"]];
+    } else if (delegate.webData.downloadInProgress == TRUE) {  // Show downloading placeholder
+        [invertebrateImage setImage:[UIImage imageNamed:@"placeholder-queued.png"]];
+        NSLog(@"Image is queued for download: %@", bug.imageFile);
+    } else {  // Show failure placeholder
+        [invertebrateImage setImage:[UIImage imageNamed:@"placeholder-unavailable.png"]];
         NSLog(@"Failed to load image: %@", bug.imageFile);
     }
     

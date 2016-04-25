@@ -37,7 +37,7 @@
     self.wikiStyleLink = [NSRegularExpression regularExpressionWithPattern:@"\\[http[^ ]+ ([^]]+)\\]"
                                                                    options:NSRegularExpressionCaseInsensitive
                                                                      error:nil];
-    
+    self.downloadInProgress = FALSE;
     return self;
 }
 
@@ -1726,6 +1726,8 @@ getPopulation
 }
 
 - (NSMutableArray<NSDictionary*> *) getBugImageURLs:(NSSet<NSString *> *) bugNames {
+//    Image download begins
+    self.downloadInProgress = TRUE;
     NSMutableArray<NSString *> *allImageNames = [[NSMutableArray<NSString *> alloc] init];
     NSMutableArray *imageData = [[NSMutableArray alloc] init];
     
@@ -1806,6 +1808,8 @@ getPopulation
     }
     
     [self setLastUpdateDate];
+    // Image download complete
+    self.downloadInProgress = FALSE;
     NSLog(@"Image Download Complete!");
 }
 

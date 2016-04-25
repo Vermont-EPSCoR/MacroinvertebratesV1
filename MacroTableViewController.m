@@ -130,16 +130,16 @@
     //    Uncomment the line below to test
     //    image = nil;
     
-    if(image != nil){
-        //UIImage *image = [UIImage imageNamed: bug.imageFile];
-        cell.macroImage.contentMode = UIViewContentModeScaleAspectFit;
-        [cell.macroImage setImage:image];
+    if(image != nil) {
+        // pass
+    } else if(delegate.webData.downloadInProgress == TRUE) {
+        image = [UIImage imageNamed:@"placeholder-queued.png"];
     } else {
-        UIImage *image = [UIImage imageNamed: @"bugA.jpg"];
-        cell.macroImage.contentMode = UIViewContentModeScaleAspectFit;
-        [cell.macroImage setImage:image];
-        
+        image = [UIImage imageNamed: @"placeholder-unavailable.png"];
     }
+    
+    cell.macroImage.contentMode = UIViewContentModeScaleAspectFit;
+    [cell.macroImage setImage:image];
     
     return cell;
 }

@@ -182,7 +182,7 @@
     if ( cell == nil ) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-    // Create a new Candy Object
+
     Stream *stream = nil;
     //stream = [streamArray objectAtIndex:indexPath.row];
     
