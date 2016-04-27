@@ -368,7 +368,7 @@
 				ORGANIZATIONNAME = mmai;
 				TargetAttributes = {
 					8984FCAF1832D88300824BB1 = {
-						DevelopmentTeam = DR8P875AC3;
+						DevelopmentTeam = M28VL36MC5;
 					};
 					8984FCD01832D88300824BB1 = {
 						TestTargetID = 8984FCAF1832D88300824BB1;
@@ -589,7 +589,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebratesv2;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebrates;
 				PRODUCT_NAME = macroinvertebrates;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -614,7 +614,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebratesv2;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.uvm.macroinvertebrates;
 				PRODUCT_NAME = macroinvertebrates;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
